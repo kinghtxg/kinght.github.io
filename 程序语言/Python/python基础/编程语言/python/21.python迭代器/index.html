@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="迭代器指的是迭代取值的工具，迭代指的是一个重复的过程，每一次重复都是基于上一次的结果而继续，单纯的重复并不是迭代 1234count &#x3D; 0while count &lt; 5:    print(count)    count +&#x3D; 1  迭代器涉及到把多个值循环取出来的工作，涉及类型包括：列表、字符串、元组、字典、集合、文件 1234567# 现在我们暂时忘记for循环,将下列列表取出l &#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="21.python迭代器">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/21.python%E8%BF%AD%E4%BB%A3%E5%99%A8/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="迭代器指的是迭代取值的工具，迭代指的是一个重复的过程，每一次重复都是基于上一次的结果而继续，单纯的重复并不是迭代 1234count &#x3D; 0while count &lt; 5:    print(count)    count +&#x3D; 1  迭代器涉及到把多个值循环取出来的工作，涉及类型包括：列表、字符串、元组、字典、集合、文件 1234567# 现在我们暂时忘记for循环,将下列列表取出l &#x3D;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201224162118990.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201225170845690.png">
+<meta property="article:published_time" content="2020-12-25T09:33:01.000Z">
+<meta property="article:modified_time" content="2020-12-25T09:33:50.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201224162118990.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/21.python%E8%BF%AD%E4%BB%A3%E5%99%A8/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>21.python迭代器 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">可迭代对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">迭代器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%BE%AA%E7%8E%AF%E5%8F%96%E5%80%BC%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.</span> <span class="nav-text">修改循环取值代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#for%E5%BE%AA%E7%8E%AF%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">for循环的工作原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">迭代器的优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="nav-number">4.1.</span> <span class="nav-text">优点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9%EF%BC%9A"><span class="nav-number">4.2.</span> <span class="nav-text">缺点：</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/21.python%E8%BF%AD%E4%BB%A3%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          21.python迭代器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-12-25 17:33:01 / 修改时间：17:33:50" itemprop="dateCreated datePublished" datetime="2020-12-25T17:33:01+08:00">2020-12-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.2k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>迭代器指的是迭代取值的工具</strong>，迭代指的是一个重复的过程，每一次重复都是基于上一次的结果而继续，<strong>单纯的重复并不是迭代</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">count = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> count &lt; <span class="number">5</span>:</span><br><span class="line">    print(count)</span><br><span class="line">    count += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>迭代器涉及到把多个值循环取出来的工作，涉及类型包括：列表、字符串、元组、字典、集合、文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 现在我们暂时忘记for循环,将下列列表取出</span></span><br><span class="line">l = [<span class="string">&#x27;egon&#x27;</span>,<span class="string">&#x27;liu&#x27;</span>,<span class="string">&#x27;alex&#x27;</span>]</span><br><span class="line">list_len = len(l)</span><br><span class="line"><span class="keyword">while</span> list_len &gt; <span class="number">0</span>:</span><br><span class="line">    list_len = list_len - <span class="number">1</span></span><br><span class="line">    print(l[list_len])</span><br><span class="line"><span class="comment"># 此取值方式是根据索引自减进行的，不适用于没有索引类型的取值(例如字典)</span></span><br></pre></td></tr></table></figure>
+
+<p>为了解决基于索引取值的局限性，python必须提供一种<strong>不依赖于索引的取值方式</strong>，就是迭代器</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="可迭代对象"><a href="#可迭代对象" class="headerlink" title="可迭代对象"></a>可迭代对象</h1><p>在了解迭代器之前，我们首先需要了解一下可迭代对象</p>
+<p>在python语法中，但凡内置有<code>__iter__</code>方法的都称之为可迭代的对象，换个说法就是可以使用<code>__iter__</code>方法将可迭代对象转换为迭代器对象</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201224162118990.png" alt="image-20201224162118990"></p>
+<p>可迭代对象：字符串、列表、元组、字典、集合、文件对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">s1 = <span class="string">&#x27;&#x27;</span></span><br><span class="line">s1.__iter__()</span><br><span class="line">l = []</span><br><span class="line">l.__iter__()</span><br><span class="line">t = &#123;<span class="string">&#x27;a&#x27;</span>,&#125;</span><br><span class="line">t.__iter__()</span><br><span class="line">d = &#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">1</span>&#125;</span><br><span class="line">d.__iter__()</span><br><span class="line">set = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br><span class="line">set.__iter__()</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.__iter__()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><p>调用可迭代对象下的<code>__iter__</code>方法会将其转换成迭代器对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>:<span class="number">3</span>&#125;</span><br><span class="line">res = d.__iter__()</span><br><span class="line">print(res) <span class="comment"># &lt;dict_keyiterator object at 0x0000015A3E5F0270&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>转换为迭代器对象之后，可以使用<code>__next__</code>进行取值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>:<span class="number">3</span>&#125;</span><br><span class="line">d_iter = d.__iter__()</span><br><span class="line">print(d_iter) <span class="comment"># &lt;dict_keyiterator object at 0x0000015A3E5F0270&gt;</span></span><br><span class="line"><span class="comment"># 三次取值会依次取元素，取值次数超过元素数，则报错</span></span><br><span class="line">print(d_iter.__next__()) <span class="comment"># a</span></span><br><span class="line">print(d_iter.__next__()) <span class="comment"># b</span></span><br><span class="line">print(d_iter.__next__()) <span class="comment"># c</span></span><br><span class="line">print(d_iter.__next__()) <span class="comment"># 抛出异常StopIteration</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="修改循环取值代码"><a href="#修改循环取值代码" class="headerlink" title="修改循环取值代码"></a>修改循环取值代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>:<span class="number">3</span>&#125;</span><br><span class="line">d_iter = d.__iter__()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        print(d_iter.__next__())</span><br><span class="line">    <span class="keyword">except</span> StopIteration: <span class="comment"># 捕捉到错误语法StopIteration执行下方代码</span></span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p><code>try...except...</code>捕捉错误语法，例如上文代码就是捕捉错误语法<code>StopIteration</code></p>
+<hr>
+<h1 id="for循环的工作原理"><a href="#for循环的工作原理" class="headerlink" title="for循环的工作原理"></a>for循环的工作原理</h1><p>其实for循环的工作原理和之前的while循环取值代码是一样的，所以for循环又被称为迭代器循环</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dic = &#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>:<span class="number">3</span>&#125;</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> dic:</span><br><span class="line">    print(k)</span><br><span class="line"><span class="comment"># 1. dic.__iter__()得到迭代器对象</span></span><br><span class="line"><span class="comment"># 2. 迭代器对象.__next__()拿到一个返回值,然后将返回值复制给k</span></span><br><span class="line"><span class="comment"># 3. 循环往复步骤2,直到抛出异常StopIteration异常,for循环捕捉异常,结束循环</span></span><br></pre></td></tr></table></figure>
+
+<p>但是我们这里需要注意这么一个问题</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dic = &#123;<span class="string">&#x27;a&#x27;</span>:<span class="number">1</span>,<span class="string">&#x27;b&#x27;</span>:<span class="number">2</span>,<span class="string">&#x27;c&#x27;</span>:<span class="number">3</span>&#125;</span><br><span class="line"><span class="comment"># 转换为迭代器对象</span></span><br><span class="line">dic_iter = dic.__iter__()</span><br><span class="line"><span class="comment"># 发现迭代器对象也可以进行__iter__转换</span></span><br><span class="line">dic_iter.__iter__()</span><br><span class="line"><span class="comment"># 发现dic_iter和dic_iter.__iter__()的内存地址都没有变化,是否调用一个样</span></span><br><span class="line"><span class="comment"># 3144960901824 3144960901824</span></span><br><span class="line">print(id(dic_iter),id(dic_iter.__iter__()))</span><br></pre></td></tr></table></figure>
+
+<p>问题来了,迭代器对象的<code>__iter__</code>有什么用？</p>
+<p>本文可迭代对象部分提到过，可迭代对象：字符串、列表、元组、字典、集合和文件对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.__iter__()</span><br><span class="line">    f.__next__()</span><br></pre></td></tr></table></figure>
+
+<p>但是文件对象不只是可迭代对象，他也是迭代器对象，它可以直接调用<code>__next__</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    print(f.__next__())</span><br><span class="line">    print(f.__next__())</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201225170845690.png" alt="image-20201225170845690"></p>
+<p>而for循环的工作原理是<code>1. dic.__iter__()得到迭代器对象</code>，而for循环并不知道他是文件对象，也就是说，我们按照for循环的规则进行转写</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f_iter = f.__iter__() <span class="comment"># 迭代器对象被.__iter__()转成了迭代器对象</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            print(f_iter.__next__())</span><br><span class="line">        <span class="keyword">except</span> StopIteration:</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>前文提到过<code>迭代器对象被.__iter__()转成了迭代器对象</code>是不会有任何变化的，但是如果他没有这个功能，在文件对象中就会导致for循环因为不能转变为迭代器对象而导致语法错误</p>
+<hr>
+<h1 id="迭代器的优缺点"><a href="#迭代器的优缺点" class="headerlink" title="迭代器的优缺点"></a>迭代器的优缺点</h1><p>基于索引的迭代取值，所有迭代的状态都保存在了索引中，而基于迭代器实现迭代的方式不再需要索引，所有迭代的状态就保存在迭代器中，然而这种处理方式优点与缺点并存：</p>
+<h2 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h2><p>1、为序列和非序列类型提供了一种统一的迭代取值方式。</p>
+<p>2、惰性计算：迭代器对象表示的是一个<strong>数据流</strong>，并非是一次性全部加载到内存，它可以只在需要时才去调用<strong>next</strong>来计算出一个值，就迭代器本身来说，同一时刻在内存中只有一个值，因而可以存放无限大的数据流，例如一个超级大的文件，python直接把文件对象做成了迭代器对象，在内存中一次性只加载next的那一部分。而对于其他容器类型，如列表，需要把所有的元素都存放于内存中，受内存大小的限制，可以存放的值的个数是有限的。</p>
+<h2 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h2><p>1、除非取尽，否则无法获取迭代器的长度</p>
+<p>2、只能取下一个值，不能回到开始，更像是‘一次性的’，迭代器产生后的唯一目标就是重复执行next方法直到值取尽，否则就会停留在某个位置，等待下一次调用next；若是要再次迭代同个对象，你只能重新调用iter方法去创建一个新的迭代器对象，如果有两个或者多个循环使用同一个迭代器，必然只会有一个循环能取到值。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/21.python%E8%BF%AD%E4%BB%A3%E5%99%A8/" title="21.python迭代器">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/21.python迭代器/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/20.python%E8%A3%85%E9%A5%B0%E5%99%A8/" rel="prev" title="20.python装饰器">
+                  <i class="fa fa-chevron-left"></i> 20.python装饰器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/22.python%E7%94%9F%E6%88%90%E5%99%A8/" rel="next" title="22.python生成器">
+                  22.python生成器 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="应用程序运行过程中产生的数据最先都是存放于内存中的，若想永久保存下来，必须要保存于硬盘中。应用程序若想操作硬件必须通过操作系统，而文件就是操作系统提供给应用程序来操作硬盘的虚拟概念。 用户或应用程序对文件的操作，就是向操作系统发起调用，然后由操作系统完成对硬盘的具体操作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="16.python的文件处理">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/16.python%E7%9A%84%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="应用程序运行过程中产生的数据最先都是存放于内存中的，若想永久保存下来，必须要保存于硬盘中。应用程序若想操作硬件必须通过操作系统，而文件就是操作系统提供给应用程序来操作硬盘的虚拟概念。 用户或应用程序对文件的操作，就是向操作系统发起调用，然后由操作系统完成对硬盘的具体操作。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201103104857210.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201104160531483.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201111114732230.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201112115652478.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201112120521037.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201113235839918.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/v2-df5334d72003b1b12e88bdf983af6b5d_720w.jpg">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201103142309522.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106102050031.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106105601942.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106105741706.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106110839204.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106112444579.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106113030431.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106172344610.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201114003658511.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118141858915.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118142730081.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118142823490.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118142949696.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118143609609.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118143552926.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118144251766.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201120005820502.png">
+<meta property="article:published_time" content="2020-11-19T07:53:01.000Z">
+<meta property="article:modified_time" content="2020-11-20T03:31:22.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201103104857210.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/16.python%E7%9A%84%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>16.python的文件处理 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E5%86%85%E5%AE%B9%E7%9A%84%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">控制文件读写内容的模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E6%A8%A1%E5%BC%8F-%E9%BB%98%E8%AE%A4%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">文本模式(默认模式)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">二进制模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#b%E6%A8%A1%E5%BC%8F%E8%AF%BB%E5%86%99%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">b模式读写文本文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8B%B7%E6%9C%AC%E6%A1%88%E4%BE%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">文件拷本案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E7%9A%84%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="nav-number">1.2.3.</span> <span class="nav-text">循环的文件读取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">文件操作基本流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">1.打开文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#win%E5%B9%B3%E5%8F%B0-%E5%BD%93%E8%B7%AF%E5%BE%84%E5%88%86%E9%9A%94%E7%AC%A6%E4%B8%8E%E8%BD%AC%E4%B9%89%E5%86%B2%E7%AA%81%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.1.1.</span> <span class="nav-text">win平台 - 当路径分隔符与转义冲突的解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#open-%E6%9C%89%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">2.1.2.</span> <span class="nav-text">open 有返回值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%93%8D%E4%BD%9C%E6%96%87%E4%BB%B6%EF%BC%9A%E8%AF%BB-%E5%86%99"><span class="nav-number">2.2.</span> <span class="nav-text">2.操作文件：读&#x2F;写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%85%B3%E9%97%AD%E6%96%87%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">3.关闭文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#with%E8%AF%AD%E5%8F%A5"><span class="nav-number">2.4.</span> <span class="nav-text">with语句</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E7%9A%84%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">文件读写的模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#r%E6%A8%A1%E5%BC%8F-%E5%8F%AA%E8%AF%BB%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">r模式(只读模式)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">3.1.1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E7%99%BB%E9%99%86%E6%A1%88%E4%BE%8B"><span class="nav-number">3.1.2.</span> <span class="nav-text">修改登陆案例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#w%E6%A8%A1%E5%BC%8F-%E5%8F%AA%E5%86%99%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">w模式(只写模式)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E7%9A%84%E6%8B%B7%E8%B4%9D%E6%A1%88%E4%BE%8B"><span class="nav-number">3.2.2.</span> <span class="nav-text">文本文件的拷贝案例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#a%E6%A8%A1%E5%BC%8F-%E5%8F%AA%E8%BF%BD%E5%8A%A0%E5%86%99"><span class="nav-number">3.3.</span> <span class="nav-text">a模式(只追加写)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-2"><span class="nav-number">3.3.1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E6%A1%88%E4%BE%8B"><span class="nav-number">3.3.2.</span> <span class="nav-text">注册案例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">+模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#r-%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.1.</span> <span class="nav-text">r+模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#w-%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.2.</span> <span class="nav-text">w+模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.4.3.</span> <span class="nav-text">a+模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#x%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.5.</span> <span class="nav-text">x模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%96%87%E4%BB%B6%E7%9A%84%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">操作文件的其他方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E6%93%8D%E4%BD%9C"><span class="nav-number">4.1.</span> <span class="nav-text">读操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#f-read"><span class="nav-number">4.1.1.</span> <span class="nav-text">f.read()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f-readline"><span class="nav-number">4.1.2.</span> <span class="nav-text">f.readline()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f-readlines"><span class="nav-number">4.1.3.</span> <span class="nav-text">f.readlines()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E6%93%8D%E4%BD%9C"><span class="nav-number">4.2.</span> <span class="nav-text">写操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#f-write"><span class="nav-number">4.2.1.</span> <span class="nav-text">f.write</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f-writelines"><span class="nav-number">4.2.2.</span> <span class="nav-text">f.writelines</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f-flush-%E4%B8%8D%E6%8E%A8%E8%8D%90%E6%89%A7%E8%A1%8C%EF%BC%8C%E9%80%9A%E5%B8%B8%E5%87%BA%E7%8E%B0%E5%9C%A8%E6%B5%8B%E8%AF%95%E5%9C%BA%E6%99%AF"><span class="nav-number">4.2.3.</span> <span class="nav-text">f.flush(不推荐执行，通常出现在测试场景)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-number">4.2.4.</span> <span class="nav-text">其他的相关操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bytes%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.2.5.</span> <span class="nav-text">Bytes类型的使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%96%87%E4%BB%B6%E6%8C%87%E9%92%88%E6%93%8D%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text">控制文件指针操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#f-seek-n-%E6%A8%A1%E5%BC%8F"><span class="nav-number">5.1.</span> <span class="nav-text">f.seek(n,模式)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0%EF%BC%9A%E5%8F%82%E7%85%A7%E7%89%A9%E6%96%87%E4%BB%B6%E5%BC%80%E5%A4%B4%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">5.1.1.</span> <span class="nav-text">0：参照物文件开头的位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%9A%E5%8F%82%E7%85%A7%E7%89%A9%E5%BD%93%E5%89%8D%E6%96%87%E4%BB%B6%E6%8C%87%E9%92%88%E4%BD%8D%E7%BD%AE"><span class="nav-number">5.1.2.</span> <span class="nav-text">1：参照物当前文件指针位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%9A%E5%8F%82%E7%85%A7%E7%89%A9%E6%98%AF%E6%96%87%E4%BB%B6%E6%9C%AB%E5%B0%BE%EF%BC%8C%E5%BA%94%E8%AF%A5%E5%80%92%E7%9D%80%E7%A7%BB%E5%8A%A8-%E8%B4%9F%E6%95%B0%E4%B8%BA%E5%80%92%E7%9D%80%E7%A7%BB"><span class="nav-number">5.1.3.</span> <span class="nav-text">2：参照物是文件末尾，应该倒着移动(负数为倒着移)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BFtail-f%E7%A8%8B%E5%BA%8F"><span class="nav-number">5.2.</span> <span class="nav-text">仿tail -f程序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="nav-number">6.</span> <span class="nav-text">修改文件内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%881"><span class="nav-number">6.1.</span> <span class="nav-text">方案1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%882"><span class="nav-number">6.2.</span> <span class="nav-text">方案2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%86%85%E5%AE%B9%E6%9B%BF%E6%8D%A2%E6%A1%88%E4%BE%8B"><span class="nav-number">6.3.</span> <span class="nav-text">文本内容替换案例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E7%9A%84%E7%9F%A5%E8%AF%86"><span class="nav-number">7.</span> <span class="nav-text">补充的知识</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/16.python%E7%9A%84%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          16.python的文件处理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-19 15:53:01" itemprop="dateCreated datePublished" datetime="2020-11-19T15:53:01+08:00">2020-11-19</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-20 11:31:22" itemprop="dateModified" datetime="2020-11-20T11:31:22+08:00">2020-11-20</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>14k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>应用程序运行过程中产生的数据最先都是存放于内存中的，若想永久保存下来，必须要保存于硬盘中。应用程序若想操作硬件必须通过操作系统，而文件就是操作系统提供给应用程序来操作硬盘的虚拟概念。</p>
+<p>用户或应用程序对文件的操作，就是向操作系统发起调用，然后由操作系统完成对硬盘的具体操作。</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201103104857210.png" alt="image-20201103104857210"></p>
+<a id="more"></a>
+
+<hr>
+<h1 id="控制文件读写内容的模式"><a href="#控制文件读写内容的模式" class="headerlink" title="控制文件读写内容的模式"></a>控制文件读写内容的模式</h1><p>强调<code>t</code>和<code>b</code>不能单独使用，必须跟<code>r/w/a</code>连用</p>
+<h2 id="文本模式-默认模式"><a href="#文本模式-默认模式" class="headerlink" title="文本模式(默认模式)"></a>文本模式(默认模式)</h2><p>文本模式顾名思义存放的就是文本文件，使用t进行读取会默认将硬盘中的二进制转成字符(如果最初不是由字符转换成的二进制，会导致编码报错)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">二进制(默认编码&#x2F;encoding指定) &lt;-&gt; t控制转换为Unicode &lt;-&gt; 字符</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>操作的只能是文本文件</p>
+</li>
+<li><p>文本文件的读写都是以str(unicode)为单位</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 硬盘文件c内容默认格式(例如utf-8)，而t模式要求读取为unicode模式</span></span><br><span class="line">f = open(<span class="string">&#x27;c&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>)</span><br><span class="line">res = f.read() <span class="comment"># 即读取时候进行转码  utf-8 -解码-&gt; unicode</span></span><br><span class="line"><span class="comment"># 这里解码默认为操作系统的默认的解码方式</span></span><br><span class="line"><span class="comment">## linux和mac系统默认编码是utf-8 ，windows系统默认为gbk</span></span><br></pre></td></tr></table></figure>
+
+<p>如果不指定，就会导致乱码问题(调用文件内容不是英文)</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201104160531483.png" alt="image-20201104160531483"></p>
+</li>
+<li><p>必须为指定<code>encoding=&#39;编码&#39;</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># encoding = &#x27;utf-8&#x27;</span></span><br><span class="line">open(<span class="string">&#x27;aaa.txt&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f1</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="二进制模式"><a href="#二进制模式" class="headerlink" title="二进制模式"></a>二进制模式</h2><p>在打开是图片、视频、软件的时候，我们不能使用t模式，报错提示该文件不是gbk编码，所以解码失败</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 错误演示 - t模式只能读取文本</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">r&#x27;C:\Users\kinght\Videos\123.mkv&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># open 只是创建文件句柄，所以不会出错</span></span><br><span class="line">    f.read() <span class="comment"># &#x27;gbk&#x27; codec can&#x27;t decode byte 0xa3 in position 4: illegal multibyte sequence</span></span><br><span class="line">    <span class="comment"># 硬盘二进制读入内存 -&gt; t模式会将其进行decode解码(非文本会报错)</span></span><br></pre></td></tr></table></figure>
+
+<p>而b模式，就是硬盘读入内存，不做任何转换，可以针对<strong>所有的文件类型</strong>进行操作</p>
+<p>而会将输出整合bytes类型  但其实就是二进制，以后操作<strong>bytes类型直接当成二进制使用</strong>，python自动转成二进制</p>
+<p>注意：由于b模式哪怕打开的是文本文件，但是由于模式限定并不会做任何转换，所以也不能指定encoding参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 错误演示</span></span><br><span class="line"><span class="comment"># with open(&#x27;user&#x27;,mode=&#x27;rb&#x27;,encoding=&#x27;utf-8&#x27;) as f:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 不能指定encoding参数</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    res = f.read()</span><br><span class="line">    print(type(res))</span><br><span class="line">    print(res) <span class="comment"># 显示的十六进制</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201111114732230.png" alt="image-20201111114732230"></p>
+<p>由于他没做任何的转码操作，所以这里取出来的二进制是系统对应的二进制直接取出(详情回看编码那一章节)，这里的user文件时直接在pycharm生成，所以是utf-8格式</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201112115652478.png" alt="image-20201112115652478"></p>
+<h3 id="b模式读写文本文件"><a href="#b模式读写文本文件" class="headerlink" title="b模式读写文本文件"></a>b模式读写文本文件</h3><p><strong>读：手工解码转成字符</strong></p>
+<p>其实t模式就是一种b模式针对文本文件加解码的简洁模式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    res = f.read().decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">    print(res)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201112120521037.png" alt="image-20201112120521037"></p>
+<p>写：<strong>字符编码转成二进制</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&quot;你好呀!&quot;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>)) <span class="comment"># 需要自行编码</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="文件拷本案例"><a href="#文件拷本案例" class="headerlink" title="文件拷本案例"></a>文件拷本案例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">src_file = input(<span class="string">&#x27;源文件路径&gt;&gt;&gt;：&#x27;</span>).strip()</span><br><span class="line">dst_file = input(<span class="string">&#x27;目的文件路径&gt;&gt;&gt;:&#x27;</span>).strip()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">r&#x27;&#123;&#125;&#x27;</span>.format(src_file),mode=<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f1,\</span><br><span class="line">    open(<span class="string">r&#x27;&#123;&#125;&#x27;</span>.format(dst_file),mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f2:</span><br><span class="line">    <span class="comment"># f2.write(f1.read()) # 如果数据量太大会冲爆内存</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f1:</span><br><span class="line">        f2.write(line)</span><br></pre></td></tr></table></figure>
+
+<h3 id="循环的文件读取"><a href="#循环的文件读取" class="headerlink" title="循环的文件读取"></a>循环的文件读取</h3><p><strong>for循环：以行为单位，如果单行过长，会导致一次性读取内容数据量过大</strong></p>
+<p>如文件拷贝案例一样，无论是文本文件、视频、图片还是其他的文件，for循环均是以换行符作为分隔(图片、视频、软件都有换行符)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">r&quot;D:\ide\pycharm\PyCharm 2020.1.2\bin\pycharm64.exe&quot;</span>,mode=<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f1:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f1:</span><br><span class="line">        print(line)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201113235839918.png" alt="image-20201113235839918"></p>
+<p>注意：有些行由于过长占用了续行，每个b’才是一个真正的行</p>
+<p><strong>while循环：可自行控制单次读取数据量</strong></p>
+<p>while循环由于不能直接按行读取，所以需要指定往后读的字节数，如果文件单行过长，建议使用while循环</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">r&quot;D:\ide\pycharm\PyCharm 2020.1.2\bin\pycharm64.exe&quot;</span>,mode=<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f1:</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="comment"># 可以规定一次读几个字节</span></span><br><span class="line">        res = f1.read(<span class="number">1024</span>)  <span class="comment"># 往后读1024个字节</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> res:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(res) <span class="comment"># 如果res不为0 返回res长度</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="文件操作基本流程"><a href="#文件操作基本流程" class="headerlink" title="文件操作基本流程"></a>文件操作基本流程</h1><h2 id="1-打开文件"><a href="#1-打开文件" class="headerlink" title="1.打开文件"></a>1.打开文件</h2><h3 id="win平台-当路径分隔符与转义冲突的解决方案"><a href="#win平台-当路径分隔符与转义冲突的解决方案" class="headerlink" title="win平台 - 当路径分隔符与转义冲突的解决方案"></a>win平台 - 当路径分隔符与转义冲突的解决方案</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># r = rawstring 原生字符串 - 不经过任何转义</span></span><br><span class="line">open(<span class="string">r&#x27;E:\code\python\demo\first\Include\aaa.txt&#x27;</span>)</span><br><span class="line"><span class="comment"># 左斜杠 - 系统会自动识别左斜杠为路径符(linux平台直接就是左斜杠)</span></span><br><span class="line">open(<span class="string">&#x27;E:/code/python/demo/first/Include/aaa.txt&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="open-有返回值"><a href="#open-有返回值" class="headerlink" title="open 有返回值"></a>open 有返回值</h3><p>应用程序向操作系统的文件系统发起系统调用open(…)请求，操作系统找到对应一块硬盘空间，并返回一个文件对象赋值给一个变量f</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># f的值是一种变量，占用本应用程序的内存空间</span></span><br><span class="line">f = open(<span class="string">&#x27;aaa.txt&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>)  <span class="comment"># 默认控制文件操作模式为r 默认控制文件读写模式为t 在这里写很鸡肋，但是为了更直观</span></span><br><span class="line">print(f) <span class="comment"># &lt;_io.TextIOWrapper name=&#x27;aaa.txt&#x27; mode=&#x27;r&#x27; encoding=&#x27;cp936&#x27;&gt; - 新的数据类型，叫做文件类型</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/v2-df5334d72003b1b12e88bdf983af6b5d_720w.jpg" alt="img"></p>
+<h2 id="2-操作文件：读-写"><a href="#2-操作文件：读-写" class="headerlink" title="2.操作文件：读/写"></a>2.操作文件：读/写</h2><p>应用程序对文件的读写请求都是在向操作系统发起系统调用，然后再用操作系统控制数据读入内存或者写入硬盘</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读文件内容</span></span><br><span class="line">res = f.read()</span><br><span class="line">print(res) <span class="comment"># 123 - aaa.txt中的内容</span></span><br><span class="line">res = f.</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-关闭文件"><a href="#3-关闭文件" class="headerlink" title="3.关闭文件"></a>3.关闭文件</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">f.close() <span class="comment"># 回收操作系统打开的文件资源</span></span><br><span class="line"><span class="keyword">del</span> f   <span class="comment"># 回收应用程序级的变量</span></span><br></pre></td></tr></table></figure>
+
+<p>这个先后顺序不能改变，如果先回收变量，就无法再使用变量名.close()回收文件资源了</p>
+<p>甚至说由于python解释器会自动对变量进行内存管理，可以不写<code>del f</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">f.close() <span class="comment"># 回收操作系统打开的文件资源</span></span><br><span class="line"><span class="comment"># 只关闭了操作系统的文件资源，而不解除变量，变量还在，但是不能进行文件操作了</span></span><br><span class="line">print(f) <span class="comment"># &lt;_io.TextIOWrapper name=&#x27;aaa.txt&#x27; mode=&#x27;rt&#x27; encoding=&#x27;cp936&#x27;&gt;</span></span><br><span class="line">print(f.read()) <span class="comment"># ValueError: I/O operation on closed file.</span></span><br></pre></td></tr></table></figure>
+
+<p>但是系统规定了能够打开文件的数量，python解释器不能自动控制回收操作系统，所以<code>f.close()</code>还是很重要的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># linux系统中使用ulimit -u可查看能够同时打开的文件数</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201103142309522.png"></p>
+<blockquote>
+<p>操作系统会在一定时间范围内扫描文件，如果文件系统没有了使用，也会自动关闭文件，但是这个期间内所导致的性能损耗也是非常大的</p>
+</blockquote>
+<h2 id="with语句"><a href="#with语句" class="headerlink" title="with语句"></a>with语句</h2><p>with open(…) as …语句，在子代码块完成后自动运行<code>f.close</code>回收文件资源</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 小贴士：除去windows系统外，其它系统均不会以后缀名作为区分文件类型的方式</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件对象 又称为 文件句柄 ： 其实就是控制文件的</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;aaa.txt&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>) <span class="keyword">as</span> f1:</span><br><span class="line">    res = f1.read()</span><br><span class="line">    print(res) <span class="comment"># aaaa</span></span><br><span class="line"><span class="comment"># with的子代码块运行完成后，会自动运行f.close()</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># with 同时打开多个文件</span></span><br><span class="line">    <span class="comment"># 加上\代表下一行还属于这一行 只是为了美观进行的换行</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;aaa.txt&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f1,\</span><br><span class="line">        open(<span class="string">&#x27;bbb&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>) <span class="keyword">as</span> f2:</span><br><span class="line">    res1 = f1.read() <span class="comment"># res1文件内容为中文由于是windows平台，需要指定utf-8</span></span><br><span class="line">    res2 = f2.read()</span><br><span class="line">    print(res1,res2) <span class="comment"># 哈哈 bbbb</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="文件读写的模式"><a href="#文件读写的模式" class="headerlink" title="文件读写的模式"></a>文件读写的模式</h1><p>所有演示均以t模式为操作模式</p>
+<h2 id="r模式-只读模式"><a href="#r模式-只读模式" class="headerlink" title="r模式(只读模式)"></a>r模式(只读模式)</h2><h3 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当文件不存在时</span></span><br><span class="line"><span class="comment"># with open(&#x27;d.txt&#x27;,mode=&#x27;rt&#x27;,encoding=&#x27;utf-8&#x27;) as f:</span></span><br><span class="line"><span class="comment">#     ... # 会报错</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 当文件存在时</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;aaa.txt&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    print(<span class="string">&#x27;第一次读取&#x27;</span>.center(<span class="number">50</span>,<span class="string">&#x27;*&#x27;</span>))</span><br><span class="line">    <span class="comment"># f.read 从硬盘把文件指针内容从头读到结尾 - 一次性全读</span></span><br><span class="line">    <span class="comment"># 如果文件过大会导致占用内存过多</span></span><br><span class="line">    res = f.read()</span><br><span class="line">    print(res)</span><br><span class="line"></span><br><span class="line">    print(<span class="string">&#x27;第二次读取&#x27;</span>.center(<span class="number">50</span>,<span class="string">&#x27;*&#x27;</span>))</span><br><span class="line">    <span class="comment"># 第二次读取是不会有内容的，因为with open把文件打开后，r模式让文件指针在最前面，所以可以读取</span></span><br><span class="line">    <span class="comment"># 但是经过一次的.red之后，文件指针已经在最末尾了，所以不能再次读取</span></span><br><span class="line">    res1 = f.read()</span><br><span class="line">    print(res1)</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改登陆案例"><a href="#修改登陆案例" class="headerlink" title="修改登陆案例"></a>修改登陆案例</h3><p>新建user文件存放账号密码</p>
+<p><strong>第一次修改文件</strong></p>
+<p>user文件内容</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kinght:geekxk</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"></span><br><span class="line">username = input(<span class="string">&quot;请输入账号：&quot;</span>).strip()</span><br><span class="line">passwrod = input(<span class="string">&#x27;请输入密码：&#x27;</span>).strip()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> users:</span><br><span class="line">    res = users.read()</span><br><span class="line">    uname,upasswd = res.split(<span class="string">&#x27;:&#x27;</span>) <span class="comment"># 解压赋值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> username == uname <span class="keyword">and</span> passwrod == upasswd:</span><br><span class="line">    print(<span class="string">&quot;登陆成功&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">&quot;账号或密码错误&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>但绝大多数情况账号和密码都不是唯一的</p>
+<p><strong>第二次修改</strong></p>
+<p>修改user内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kinght:geekxk</span><br><span class="line">root:root</span><br><span class="line">abc:abc</span><br><span class="line">tom:jack</span><br></pre></td></tr></table></figure>
+
+<p>注意，文件中每一行是存在换行符的<code>\n</code>，而且print也会再次复制换行符</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> lin <span class="keyword">in</span> f:</span><br><span class="line">        print(lin)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106102050031.png" alt="image-20201106102050031"></p>
+<p>完整版修改：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">input_username = input(<span class="string">&quot;请输入账号：&quot;</span>).strip()</span><br><span class="line">input_passwd = input(<span class="string">&#x27;请输入密码：&#x27;</span>).strip()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> lin <span class="keyword">in</span> f:</span><br><span class="line">        <span class="comment"># strip 是消除所有的空白字符(包括换行符)</span></span><br><span class="line">        username,password = lin.strip().split(<span class="string">&#x27;:&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> username == input_username <span class="keyword">and</span> password == input_passwd:</span><br><span class="line">            print(<span class="string">&#x27;login successfull&#x27;</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&#x27;username or password error&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="w模式-只写模式"><a href="#w模式-只写模式" class="headerlink" title="w模式(只写模式)"></a>w模式(只写模式)</h2><p>w模式用来创建全新的文件</p>
+<h3 id="基础知识-1"><a href="#基础知识-1" class="headerlink" title="基础知识"></a>基础知识</h3><p>当文件不存在的时候会生成一个空文件(未设置文件类型)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当文件不存在时，会生成文件</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;d&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    ... <span class="comment"># python的占位符号</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106105601942.png" alt="image-20201106105601942"></p>
+<p>当文件存在时候会清空文件(<strong>坚决杜绝W模式打开重要文件</strong>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当文件存在会清空文件，指针位于开始位置</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    ... <span class="comment"># python的占位符号</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106105741706.png" alt="image-20201106105741706"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># f.read() # 只写模式不能读</span></span><br><span class="line">    f.write(<span class="string">&#x27;哈哈哈哈，我擦嘞\n干啥勒&#x27;</span>)</span><br><span class="line">    <span class="comment"># 在w模式下打开文件没有关闭的情况下，会让指针继续往后书写</span></span><br><span class="line">    f.write(<span class="string">&#x27;猜猜这是第几行&#x27;</span>) <span class="comment"># 并没有换行符</span></span><br><span class="line">    f.write(<span class="string">&#x27;再来一次&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106110839204.png" alt="image-20201106110839204"></p>
+<h3 id="文本文件的拷贝案例"><a href="#文本文件的拷贝案例" class="headerlink" title="文本文件的拷贝案例"></a>文本文件的拷贝案例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 文本文件的copy工具</span></span><br><span class="line"></span><br><span class="line">input_file = input(<span class="string">&quot;请输入源文件路径&gt;&gt;&gt;:&quot;</span>)</span><br><span class="line">output_file = input(<span class="string">&#x27;请输入输出文件存放路径&gt;&gt;&gt;:&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不直接使用变量名而使用标准输出语法是因为可能会有windows系统使用本程序，需要处理反斜杠</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">r&#x27;&#123;&#125;&#x27;</span>.format(input_file),mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f1,\</span><br><span class="line">    open(<span class="string">r&#x27;&#123;&#125;&#x27;</span>.format(output_file),mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f2:</span><br><span class="line">    <span class="comment"># f2.write(f1.read()) # 如果数据量太大会冲爆内存</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f1:</span><br><span class="line">        f2.write(line)</span><br></pre></td></tr></table></figure>
+
+<h2 id="a模式-只追加写"><a href="#a模式-只追加写" class="headerlink" title="a模式(只追加写)"></a>a模式(只追加写)</h2><p>a模式用来在原有文件的基础上写入新的内容，比如记录日志，比如注册功能</p>
+<h3 id="基础知识-2"><a href="#基础知识-2" class="headerlink" title="基础知识"></a>基础知识</h3><p>当文件不存在时,会创建空文档，文件指针再开头</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当文件不存在时,会创建空文档</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;c&#x27;</span>,mode=<span class="string">&#x27;at&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106112444579.png" alt="image-20201106112444579"></p>
+<p>当文件存在时，文件指针会直接跳到末尾</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当文件不存在时,会创建空文档</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;at&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&#x27;\n新写入的内容&#x27;</span>)</span><br><span class="line">    f.write(<span class="string">&#x27;\n在写一行&#x27;</span>)</span><br><span class="line"><span class="comment"># a模式，文件不会被清空，文件指针会直接跳到末尾</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;at&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&#x27;\n文件不会被清空&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106113030431.png" alt="image-20201106113030431"></p>
+<h3 id="注册案例"><a href="#注册案例" class="headerlink" title="注册案例"></a>注册案例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"></span><br><span class="line">inp_username = input(<span class="string">&#x27;请输入注册账号:&#x27;</span>)</span><br><span class="line">inp_passworld = input(<span class="string">&#x27;请输入密码:&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;at&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> users,\</span><br><span class="line">    open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> xy_user:</span><br><span class="line">    <span class="comment"># 读取user内的值，并查找是否用相同用户名</span></span><br><span class="line">    <span class="keyword">for</span> xy <span class="keyword">in</span> xy_user:</span><br><span class="line">        username,passworld = xy.strip().split(<span class="string">&#x27;:&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> username == inp_username:</span><br><span class="line">            print(<span class="string">&quot;账号已存在&quot;</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        users.write(<span class="string">&#x27;&#123;&#125;:&#123;&#125;\n&#x27;</span>.format(inp_username,inp_passworld))</span><br></pre></td></tr></table></figure>
+
+<h2 id="模式"><a href="#模式" class="headerlink" title="+模式"></a>+模式</h2><p>+模式不能单独使用，必须配合r、w、a</p>
+<p>案例假设 asdasd文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kinght:abcd</span><br><span class="line">root:root</span><br><span class="line">abcd:123</span><br><span class="line">cda:we</span><br></pre></td></tr></table></figure>
+
+<h3 id="r-模式"><a href="#r-模式" class="headerlink" title="r+模式"></a>r+模式</h3><p>可读可写，但是特性取决于r(即文件不存在则报错)，文件存在指针在最前面</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;asdasd&#x27;</span>,mode=<span class="string">&#x27;rt+&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&#x27;abc&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201106172344610.png" alt="image-20201106172344610"></p>
+<p>kin被替换成了abc</p>
+<h3 id="w-模式"><a href="#w-模式" class="headerlink" title="w+模式"></a>w+模式</h3><p>可读可写，但特性取决于w(即文件不存在创建文件)，文件指针在最前面</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;asdasd&#x27;</span>,mode=<span class="string">&#x27;wt+&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># w模式会清空文件</span></span><br><span class="line">    f.write(<span class="string">&#x27;abc&#x27;</span>) <span class="comment"># 写入文件后</span></span><br><span class="line">    <span class="comment"># write会让指针移到末尾，故.read直接读取都不到东西</span></span><br><span class="line">    <span class="comment"># .read读取文件是从当前文件指针位置到末尾</span></span><br><span class="line">    print(f.read())</span><br></pre></td></tr></table></figure>
+
+<h3 id="a-模式"><a href="#a-模式" class="headerlink" title="a+模式"></a>a+模式</h3><p>可读可写，但特性取决于a(即文件不存在创建文本文件)，文件指针在最后面</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;asdasd&#x27;</span>,mode=<span class="string">&#x27;at+&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># a模式会让文件指针直接在最后</span></span><br><span class="line">    <span class="comment"># 故.read直接读取不到东西</span></span><br><span class="line">    print(f.read())</span><br></pre></td></tr></table></figure>
+
+<h2 id="x模式"><a href="#x模式" class="headerlink" title="x模式"></a>x模式</h2><p>只写模式(了解即可)，文件不存在则生成文件，文件存在则报错，这个模式可以防止w的覆盖操作，不过完全可以加判断代替</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件存在则报错</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;a.txt&#x27;</span>,mode=<span class="string">&#x27;xt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">pass</span> <span class="comment"># pass 与 ... 作用相同</span></span><br><span class="line">    <span class="comment"># [Errno 17] File exists: &#x27;a.txt&#x27;</span></span><br><span class="line"><span class="comment"># 文件不存在则生成文件</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;b.txt&#x27;</span>,mode=<span class="string">&#x27;xt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&#x27;哈哈哈哈&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="操作文件的其他方法"><a href="#操作文件的其他方法" class="headerlink" title="操作文件的其他方法"></a>操作文件的其他方法</h1><h2 id="读操作"><a href="#读操作" class="headerlink" title="读操作"></a>读操作</h2><p>read和readlines由于都会一次性读取所有的文件内容，所以对于内存有一定溢出的危险</p>
+<h3 id="f-read"><a href="#f-read" class="headerlink" title="f.read()"></a>f.read()</h3><p>读取所有内容,执行完该操作后，文件指针会移动到文件末尾</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    print(f.read(<span class="number">3</span>)) <span class="comment"># 指定单次读取3字符(b模式是3个bytes数据)</span></span><br><span class="line">    print(f.read()) <span class="comment"># 读取完所有内容</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="f-readline"><a href="#f-readline" class="headerlink" title="f.readline()"></a>f.readline()</h3><p>读取一行内容,光标移动到第二行首部</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 读操作</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 读取一行内容,光标移动到第二行首部</span></span><br><span class="line">    print(f.readline()) <span class="comment"># 你好呀!</span></span><br><span class="line">    print(f.readline()) <span class="comment"># helloworld</span></span><br><span class="line">    print(f.readline()) <span class="comment"># i&#x27;m fine thank you</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>while文件拷贝案例修改</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        line = f.readline()</span><br><span class="line">        <span class="keyword">if</span> len(line) == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(line)</span><br></pre></td></tr></table></figure>
+
+<h3 id="f-readlines"><a href="#f-readlines" class="headerlink" title="f.readlines()"></a>f.readlines()</h3><p>当前文件指针为起始，读取每一行内容，并且按行为分割，存放于列表中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    print(f.readlines())  <span class="comment"># [&#x27;helloworld\n&#x27;, &quot;i&#x27;m fine thank you\n&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201114003658511.png" alt="image-20201114003658511"></p>
+<h2 id="写操作"><a href="#写操作" class="headerlink" title="写操作"></a>写操作</h2><h3 id="f-write"><a href="#f-write" class="headerlink" title="f.write"></a>f.write</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&#x27;111\n222\n333\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118141858915.png" alt="image-20201118141858915"></p>
+<h3 id="f-writelines"><a href="#f-writelines" class="headerlink" title="f.writelines"></a>f.writelines</h3><p>将列表循环写入到文件中</p>
+<p><strong>方案一</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">l = [<span class="string">&#x27;111\n&#x27;</span>,<span class="string">&#x27;222&#x27;</span>,<span class="string">&#x27;333&#x27;</span>]</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> l:</span><br><span class="line">        f.write(line)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118142730081.png" alt="image-20201118142730081"></p>
+<p><strong>方案二</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">l = [<span class="string">&#x27;444\n&#x27;</span>,<span class="string">&#x27;555&#x27;</span>,<span class="string">&#x27;666&#x27;</span>]</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.writelines(l)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118142823490.png" alt="image-20201118142823490"></p>
+<h3 id="f-flush-不推荐执行，通常出现在测试场景"><a href="#f-flush-不推荐执行，通常出现在测试场景" class="headerlink" title="f.flush(不推荐执行，通常出现在测试场景)"></a>f.flush(不推荐执行，通常出现在测试场景)</h3><p>刷新，写入文件的时候为了减少I/O延迟，通常不是即使写入硬盘，而是先放于内存中，f.flush则是让计算机立即将前面的操作写入到硬盘中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&#x27;abcdefg&#x27;</span>)</span><br><span class="line">    f.flush()</span><br></pre></td></tr></table></figure>
+
+<h3 id="其他的相关操作"><a href="#其他的相关操作" class="headerlink" title="其他的相关操作"></a>其他的相关操作</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">f = open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">print(f.readable()) <span class="comment"># True 文件是否可读</span></span><br><span class="line">print(f.writable())  <span class="comment"># False 文件是否可写(这里是r模式,不可写)</span></span><br><span class="line">print(f.closed)  <span class="comment"># False 文件是否关闭</span></span><br><span class="line">print(f.encoding)  <span class="comment"># utf-8 文件编码格式(如果文件打开模式为b,则没有该属性)</span></span><br><span class="line">print(f.flush())  <span class="comment"># 立刻将文件内容从内存刷到硬盘</span></span><br><span class="line">print(f.name) <span class="comment"># 文件名</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Bytes类型的使用"><a href="#Bytes类型的使用" class="headerlink" title="Bytes类型的使用"></a>Bytes类型的使用</h3><p><strong>t模式写入，要求列表内必须全部为字符串</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">l = [<span class="string">&#x27;444&#x27;</span>,<span class="string">&#x27;555&#x27;</span>,<span class="string">&#x27;666&#x27;</span>,<span class="number">777</span>]</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.writelines(l)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118142949696.png" alt="image-20201118142949696"></p>
+<p>我们知道，b模式需要编码才能写入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">l = [</span><br><span class="line">    <span class="string">&#x27;44asd4&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;55weq5&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;66qwe6&#x27;</span></span><br><span class="line">]</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.writelines(l)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118143609609.png" alt="image-20201118143609609"></p>
+<p>编码后</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">l = [</span><br><span class="line">    <span class="string">&#x27;44asd4&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>),</span><br><span class="line">    <span class="string">&#x27;55weq5&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>),</span><br><span class="line">    <span class="string">&#x27;66qwe6&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">]</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.writelines(l)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118143552926.png" alt="image-20201118143552926"></p>
+<p>如果是字符串中只有英文和数字，bytes类型的英文和数字只是在前方加了b</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">l = [</span><br><span class="line">    <span class="string">b&#x27;44asd4&#x27;</span>,</span><br><span class="line">    <span class="string">b&#x27;55weq5&#x27;</span>,</span><br><span class="line">    <span class="string">b&#x27;66qwe6&#x27;</span></span><br><span class="line">]</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.writelines(l)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201118144251766.png" alt="image-20201118144251766"></p>
+<p>而有了中文，bytes则需要规定编码格式<code>encode(&#39;utf-8&#39;)</code>，实际上转换是调用bytes进行类型转换，规定格式utf-8</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bytes(<span class="string">&#x27;上&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>将中文转换为bytes类型</p>
+<hr>
+<h1 id="控制文件指针操作"><a href="#控制文件指针操作" class="headerlink" title="控制文件指针操作"></a>控制文件指针操作</h1><p>前文提到过，我们写入和读取都会让文件指针移动，导致在同一文件句柄下无法重复读取和覆盖写入</p>
+<p><strong>指针移动的单位都是以bytes/字节为单位</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f.tell() <span class="comment"># 获取文件指针当前位置	</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="f-seek-n-模式"><a href="#f-seek-n-模式" class="headerlink" title="f.seek(n,模式)"></a>f.seek(n,模式)</h2><p>n指的是移动bytes个数，模式有三种(0,1,2)，只有0模式可以在t下使用，1、2必须在b模式下用</p>
+<p>如果指针移动到末尾就不会再次移动</p>
+<h3 id="0：参照物文件开头的位置"><a href="#0：参照物文件开头的位置" class="headerlink" title="0：参照物文件开头的位置"></a>0：参照物文件开头的位置</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># user文件内容:123你好</span></span><br><span class="line">f = open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line">f.seek(<span class="number">3</span>,<span class="number">0</span>) <span class="comment"># 文件指针在第3个bytes</span></span><br><span class="line">print(f.tell()) <span class="comment"># 3</span></span><br><span class="line">f.seek(<span class="number">2</span>,<span class="number">0</span>) <span class="comment"># 文件指针在第2个bytes</span></span><br><span class="line">print(f.tell()) <span class="comment"># 2 注意：这里是参照文件开头</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果指针移动到中文3个字节，会导致转码失败</span></span><br><span class="line">f.seek(<span class="number">4</span>,<span class="number">0</span>) <span class="comment"># 第四个字节是中文’你‘的第一个字节</span></span><br><span class="line">print(f.read().decode(<span class="string">&#x27;utf-8&#x27;</span>)) <span class="comment"># 由于不完整读取不到第一个字节，转码会导致报错</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1：参照物当前文件指针位置"><a href="#1：参照物当前文件指针位置" class="headerlink" title="1：参照物当前文件指针位置"></a>1：参照物当前文件指针位置</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">f = open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line">f.seek(<span class="number">3</span>,<span class="number">0</span>) <span class="comment"># 文件指针在第3个bytes</span></span><br><span class="line">print(f.tell()) <span class="comment"># 3</span></span><br><span class="line">f.seek(<span class="number">2</span>,<span class="number">1</span>) <span class="comment"># 文件指针在第5个bytes</span></span><br><span class="line">print(f.tell()) <span class="comment"># 5 注意：这里是参照文件指针当前位置</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2：参照物是文件末尾，应该倒着移动-负数为倒着移"><a href="#2：参照物是文件末尾，应该倒着移动-负数为倒着移" class="headerlink" title="2：参照物是文件末尾，应该倒着移动(负数为倒着移)"></a>2：参照物是文件末尾，应该倒着移动(负数为倒着移)</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># user:123你好</span></span><br><span class="line">f = open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rb&#x27;</span>)</span><br><span class="line">f.seek(<span class="number">-3</span>,<span class="number">2</span>)</span><br><span class="line">print(f.tell()) <span class="comment"># 6</span></span><br><span class="line">print(f.read().decode(<span class="string">&#x27;utf-8&#x27;</span>)) <span class="comment"># 好</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="仿tail-f程序"><a href="#仿tail-f程序" class="headerlink" title="仿tail -f程序"></a>仿<code>tail -f</code>程序</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="comment"># 使用b模式是为了增加适用范围</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;access.log&#x27;</span>,mode=<span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 指针移动到文件末尾</span></span><br><span class="line">    f.seek(<span class="number">0</span>,<span class="number">2</span>) <span class="comment"># 通常seek的1和2模式不能在t模式下使用，但0移动除外</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        res = f.readline().decode(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> len(res) == <span class="number">0</span>:</span><br><span class="line">            time.sleep(<span class="number">1</span>) <span class="comment"># 让程序沉睡1秒</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(res,end=<span class="string">&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="修改文件内容"><a href="#修改文件内容" class="headerlink" title="修改文件内容"></a>修改文件内容</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 文件a.txt内容如下</span></span><br><span class="line">张一蛋     山东    <span class="number">179</span>    <span class="number">49</span>    <span class="number">12344234523</span></span><br><span class="line">李二蛋     河北    <span class="number">163</span>    <span class="number">57</span>    <span class="number">13913453521</span></span><br><span class="line">王全蛋     山西    <span class="number">153</span>    <span class="number">62</span>    <span class="number">18651433422</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行操作</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;a.txt&#x27;</span>,mode=<span class="string">&#x27;r+t&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.seek(<span class="number">9</span>)</span><br><span class="line">    f.write(<span class="string">&#x27;&lt;妇女主任&gt;&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文件修改后的内容如下</span></span><br><span class="line">张一蛋&lt;妇女主任&gt; <span class="number">179</span>    <span class="number">49</span>    <span class="number">12344234523</span></span><br><span class="line">李二蛋     河北    <span class="number">163</span>    <span class="number">57</span>    <span class="number">13913453521</span></span><br><span class="line">王全蛋     山西    <span class="number">153</span>    <span class="number">62</span>    <span class="number">18651433422</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 强调：</span></span><br><span class="line"><span class="comment"># 1、硬盘空间是无法修改的,硬盘中数据的更新都是用新内容覆盖旧内容</span></span><br><span class="line"><span class="comment"># 2、内存中的数据是可以修改的</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>文件对应的是硬盘空间,硬盘不能修改对应着文件本质也不能修改</strong></p>
+<p><strong>文件的内容可以修改大致的思路是计算机将硬盘中文件内容读入内存,然后在内存中修改完毕后再覆盖回硬盘</strong></p>
+<h2 id="方案1"><a href="#方案1" class="headerlink" title="方案1"></a>方案1</h2><p>目前文件编辑器大多采用此方案</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;a.txt&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 将文件整体读入内存</span></span><br><span class="line">    res = f.read()</span><br><span class="line">    <span class="comment"># 修改文件</span></span><br><span class="line">    data = res.replace(<span class="string">&#x27;张一蛋&#x27;</span>,<span class="string">&#x27;张全蛋&#x27;</span>)</span><br><span class="line">    print(data)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此时修改后的文件在内存中，就可以打开另一个句柄</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;a.txt&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(data) <span class="comment"># 将修改后的内容写入硬盘</span></span><br></pre></td></tr></table></figure>
+
+<p>实现思路：将文件内容发一次性全部读入内存,然后在内存中修改完毕后再覆盖写回原文件<br>优点: 在文件修改过程中同一份数据只有一份<br>缺点: 会过多地占用内存</p>
+<h2 id="方案2"><a href="#方案2" class="headerlink" title="方案2"></a>方案2</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;a.txt&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f,\</span><br><span class="line">    open(<span class="string">&#x27;.a.txt.swap&#x27;</span>,mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f1:</span><br><span class="line">    <span class="comment"># .a.txt.swap 是一种命名规范 .是隐藏文件 .swap是缓存文件</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">        f1.write(line.replace(<span class="string">&#x27;李二蛋&#x27;</span>,<span class="string">&#x27;牛铁蛋&#x27;</span>))</span><br><span class="line">os.remove(<span class="string">&#x27;a.txt&#x27;</span>) <span class="comment"># 删除源文件</span></span><br><span class="line">os.rename(<span class="string">&#x27;.a.txt.swap&#x27;</span>,<span class="string">&#x27;a.txt&#x27;</span>) <span class="comment"># 将中间文件文件名改为源文件</span></span><br></pre></td></tr></table></figure>
+
+<p>实现思路：以读的方式打开原文件,以写的方式打开一个临时文件,一行行读取原文件内容,修改完后写入临时文件…,删掉原文件,将临时文件重命名原文件名<br>优点: 不会占用过多的内存<br>缺点: 在文件修改过程中同一份数据存了两份</p>
+<h2 id="文本内容替换案例"><a href="#文本内容替换案例" class="headerlink" title="文本内容替换案例"></a>文本内容替换案例</h2><p>使用案例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python your_script.py old_str new_str filename</span><br></pre></td></tr></table></figure>
+
+<p>查找filename文件内的old_str替换为new_str</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="comment"># sys.argv从外部接受参数</span></span><br><span class="line"><span class="comment"># 第一个输入参数是 全局替换.py 的文件名</span></span><br><span class="line">old_str = sys.argv[<span class="number">1</span>] <span class="comment"># 第2个输入参数</span></span><br><span class="line">new_str = sys.argv[<span class="number">2</span>] <span class="comment"># 第3个输入参数</span></span><br><span class="line">filename = sys.argv[<span class="number">3</span>] <span class="comment"># 第4个输入参数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;&#123;&#125;&#x27;</span>.format(filename),mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file,\</span><br><span class="line">    open(<span class="string">&#x27;.&#123;&#125;.swap&#x27;</span>.format(filename),mode=<span class="string">&#x27;wt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> sfile:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> file:</span><br><span class="line">        sfile.write(line.replace(old_str,new_str))</span><br><span class="line">os.remove(filename)</span><br><span class="line">os.rename(<span class="string">&#x27;.&#123;&#125;.swap&#x27;</span>.format(filename),filename)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201120005820502.png" alt="image-20201120005820502"></p>
+<hr>
+<h1 id="补充的知识"><a href="#补充的知识" class="headerlink" title="补充的知识"></a>补充的知识</h1><p>在最初的时候，换行是由两个字符共同完成的操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;\r\n&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>\r</code>完成回到行首，<code>\n</code>完成到达下一行</p>
+<p>于是乎操作系统对于这个就有了不同的理解，例如linux和mac平台认为直接使用<code>\n</code>来代替会到行首加下一行的工作即可，而win平台则坚持使用了<code>\r\n</code>的方式，不过对于python3而言，我们编写代码直接使用<code>\n</code>就可以了</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/16.python%E7%9A%84%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86/" title="16.python的文件处理">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/16.python的文件处理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/15.python%E7%9A%84%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81/" rel="prev" title="15.python的字符编码">
+                  <i class="fa fa-chevron-left"></i> 15.python的字符编码
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/17.python%E5%87%BD%E6%95%B0%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" rel="next" title="17.python函数的基本使用">
+                  17.python函数的基本使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

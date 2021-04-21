@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="安装next模板的初始设置，友情链接是直接放在侧边栏里的，少还好，一旦友情链接多了，就会显得侧边栏特别的杂乱，所以就打算专门做个页面来存放友链">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.hexo+next友情链接页面搭建">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4/hexo%E7%9B%B8%E5%85%B3/%E8%BF%90%E7%BB%B4%E7%9B%B8%E5%85%B3/hexo/1.hexo+next%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5%E9%A1%B5%E9%9D%A2%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="安装next模板的初始设置，友情链接是直接放在侧边栏里的，少还好，一旦友情链接多了，就会显得侧边栏特别的杂乱，所以就打算专门做个页面来存放友链">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802221518001.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802222719980.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802222637653.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802223147086.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802223308895.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802223531176.png">
+<meta property="article:published_time" content="2020-08-02T14:36:47.000Z">
+<meta property="article:modified_time" content="2020-09-26T01:08:46.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802221518001.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4/hexo%E7%9B%B8%E5%85%B3/%E8%BF%90%E7%BB%B4%E7%9B%B8%E5%85%B3/hexo/1.hexo+next%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5%E9%A1%B5%E9%9D%A2%E6%90%AD%E5%BB%BA/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>1.hexo+next友情链接页面搭建 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B0%E5%A2%9ELinks%E9%A1%B5%E9%9D%A2"><span class="nav-number">1.</span> <span class="nav-text">新增Links页面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%8F%8B%E9%93%BE%E6%A0%8F"><span class="nav-number">2.</span> <span class="nav-text">创建友链栏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E5%8F%8B%E9%93%BE%E9%A1%B5%E9%9D%A2%E6%A0%B7%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">增加友链页面样式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%8B%E9%93%BE"><span class="nav-number">4.</span> <span class="nav-text">配置友链</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4/hexo%E7%9B%B8%E5%85%B3/%E8%BF%90%E7%BB%B4%E7%9B%B8%E5%85%B3/hexo/1.hexo+next%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5%E9%A1%B5%E9%9D%A2%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          1.hexo+next友情链接页面搭建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-02 22:36:47" itemprop="dateCreated datePublished" datetime="2020-08-02T22:36:47+08:00">2020-08-02</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-26 09:08:46" itemprop="dateModified" datetime="2020-09-26T09:08:46+08:00">2020-09-26</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4/" itemprop="url" rel="index"><span itemprop="name">系统运维</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4/hexo%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">hexo相关</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.4k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>安装next模板的初始设置，友情链接是直接放在侧边栏里的，少还好，一旦友情链接多了，就会显得侧边栏特别的杂乱，所以就打算专门做个页面来存放友链</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="新增Links页面"><a href="#新增Links页面" class="headerlink" title="新增Links页面"></a>新增Links页面</h1><p>命令创建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new page links</span><br></pre></td></tr></table></figure>
+
+<p>然后根目录下/source就新增了一个links文件夹，里面还有一个index.md文件</p>
+<p>在文件中写入<code>type: &quot;links&quot;</code>，如果还想禁止评论的话就再写一个<code>comments: false</code></p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802221518001.png" alt="image-20200802221518001"></p>
+<h1 id="创建友链栏"><a href="#创建友链栏" class="headerlink" title="创建友链栏"></a>创建友链栏</h1><p>在<code>blog\themes\next\_config.yml</code>里找到menu，在其中添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">links: &#x2F;links&#x2F;|| link</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802222719980.png" alt="image-20200802222719980"></p>
+<p>在<code>blog\themes\next\languages\zh-Hans.yml</code>的menu里添加中文描述</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">links: 友链</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802222637653.png" alt="image-20200802222637653"></p>
+<h1 id="增加友链页面样式"><a href="#增加友链页面样式" class="headerlink" title="增加友链页面样式"></a>增加友链页面样式</h1><p>在<code>blog\themes\next\layout</code>创建links.swig，内容如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">&#123;% block content %&#125;</span><br><span class="line">  &#123;######################&#125;</span><br><span class="line">  &#123;### LINKS BLOCK ###&#125;</span><br><span class="line">  &#123;######################&#125;</span><br><span class="line"></span><br><span class="line">    &lt;div id&#x3D;&quot;links&quot;&gt;</span><br><span class="line">        &lt;style&gt;</span><br><span class="line"></span><br><span class="line">            #links&#123;</span><br><span class="line">               margin-top: 5rem;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            .links-content&#123;</span><br><span class="line">                margin-top:1rem;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            .link-navigation::after &#123;</span><br><span class="line">                content: &quot; &quot;;</span><br><span class="line">                display: block;</span><br><span class="line">                clear: both;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            .card &#123;</span><br><span class="line">                width: 300px;</span><br><span class="line">                font-size: 1rem;</span><br><span class="line">                padding: 10px 20px;</span><br><span class="line">                border-radius: 4px;</span><br><span class="line">                transition-duration: 0.15s;</span><br><span class="line">                margin-bottom: 1rem;</span><br><span class="line">                display:flex;</span><br><span class="line">            &#125;</span><br><span class="line">            .card:nth-child(odd) &#123;</span><br><span class="line">                float: left;</span><br><span class="line">            &#125;</span><br><span class="line">            .card:nth-child(even) &#123;</span><br><span class="line">                float: right;</span><br><span class="line">            &#125;</span><br><span class="line">            .card:hover &#123;</span><br><span class="line">                transform: scale(1.1);</span><br><span class="line">                box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);</span><br><span class="line">            &#125;</span><br><span class="line">            .card a &#123;</span><br><span class="line">                border:none;</span><br><span class="line">            &#125;</span><br><span class="line">            .card .ava &#123;</span><br><span class="line">                width: 3rem!important;</span><br><span class="line">                height: 3rem!important;</span><br><span class="line">                margin:0!important;</span><br><span class="line">                margin-right: 1em!important;</span><br><span class="line">                border-radius:4px;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">            .card .card-header &#123;</span><br><span class="line">                font-style: italic;</span><br><span class="line">                overflow: hidden;</span><br><span class="line">                width: 236px;</span><br><span class="line">            &#125;</span><br><span class="line">            .card .card-header a &#123;</span><br><span class="line">                font-style: normal;</span><br><span class="line">                color: #2bbc8a;</span><br><span class="line">                font-weight: bold;</span><br><span class="line">                text-decoration: none;</span><br><span class="line">            &#125;</span><br><span class="line">            .card .card-header a:hover &#123;</span><br><span class="line">                color: #d480aa;</span><br><span class="line">                text-decoration: none;</span><br><span class="line">            &#125;</span><br><span class="line">            .card .card-header .info &#123;</span><br><span class="line">                font-style:normal;</span><br><span class="line">                color:#a3a3a3;</span><br><span class="line">                font-size:14px;</span><br><span class="line">                min-width: 0;</span><br><span class="line">                text-overflow: ellipsis;</span><br><span class="line">                overflow: hidden;</span><br><span class="line">                white-space: nowrap;</span><br><span class="line">            &#125;</span><br><span class="line">        &lt;&#x2F;style&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;links-content&quot;&gt;</span><br><span class="line">            &lt;div class&#x3D;&quot;link-navigation&quot;&gt;</span><br><span class="line"></span><br><span class="line">                &#123;% for link in theme.mylinks %&#125;</span><br><span class="line"></span><br><span class="line">                    &lt;div class&#x3D;&quot;card&quot;&gt;</span><br><span class="line">                        &lt;img class&#x3D;&quot;ava&quot; src&#x3D;&quot;&#123;&#123; link.avatar &#125;&#125;&quot;&#x2F;&gt;</span><br><span class="line">                        &lt;div class&#x3D;&quot;card-header&quot;&gt;</span><br><span class="line">                           &lt;div&gt;</span><br><span class="line">                              &lt;a href&#x3D;&quot;&#123;&#123; link.site &#125;&#125;&quot; target&#x3D;&quot;_blank&quot;&gt; &#123;&#123; link.nickname &#125;&#125;&lt;&#x2F;a&gt;</span><br><span class="line">                              &lt;a href&#x3D;&quot;&#123;&#123; link.site &#125;&#125;&quot; target&#x3D;&quot;_blank&quot;&gt;&lt;span class&#x3D;&quot;focus-links&quot;&gt;关注&lt;&#x2F;span&gt;&lt;&#x2F;a&gt;</span><br><span class="line">                           &lt;&#x2F;div&gt;</span><br><span class="line">                           &lt;div class&#x3D;&quot;info&quot;&gt;&#123;&#123; link.info &#125;&#125;&lt;&#x2F;div&gt;</span><br><span class="line">                        &lt;&#x2F;div&gt;</span><br><span class="line">                    &lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line">                &#123;% endfor %&#125;</span><br><span class="line"></span><br><span class="line">            &lt;&#x2F;div&gt;</span><br><span class="line">            &#123;&#123; page.content &#125;&#125;</span><br><span class="line">            &lt;&#x2F;div&gt;</span><br><span class="line">        &lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line">  &#123;##########################&#125;</span><br><span class="line">  &#123;### END LINKS BLOCK ###&#125;</span><br><span class="line">  &#123;##########################&#125;</span><br><span class="line">&#123;% endblock %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改<code>blog\themes\next\layout\page.swig</code>页面</p>
+<p>在block title内部插入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 友情链接--&gt;</span><br><span class="line">#&#125;&#123;% elif page.type &#x3D;&#x3D;&#x3D; &#39;links&#39; and not page.title %&#125;&#123;#</span><br><span class="line">  #&#125;&#123;&#123; __(&#39;title.links&#39;) + page_title_suffix &#125;&#125;&#123;#</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802223147086.png" alt="image-20200802223147086"></p>
+<p>在同页面的PAGE BODY内部引入page.swig</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 友情链接--&gt;</span><br><span class="line">&#123;% elif page.type &#x3D;&#x3D;&#x3D; &#39;links&#39; %&#125;</span><br><span class="line">    &#123;% include &#39;links.swig&#39; %&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802223308895.png" alt="image-20200802223308895"></p>
+<h1 id="配置友链"><a href="#配置友链" class="headerlink" title="配置友链"></a>配置友链</h1><p>在<code>blog\themes\next\_config.yml</code>里的末尾处新增mylinks，这里就是做友情链接的地方</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mylinks:</span><br><span class="line"></span><br><span class="line">- nickname: 尘埃&#39;s blog</span><br><span class="line">  avatar: https:&#x2F;&#x2F;dustca.xyz&#x2F;image&#x2F;avatar.jpeg</span><br><span class="line">  site: https:&#x2F;&#x2F;Mint-Bh.github.io</span><br><span class="line">  info: 一个搞安全的咸鱼</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200802223531176.png" alt="image-20200802223531176"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%B3%BB%E7%BB%9F%E8%BF%90%E7%BB%B4/hexo%E7%9B%B8%E5%85%B3/%E8%BF%90%E7%BB%B4%E7%9B%B8%E5%85%B3/hexo/1.hexo+next%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5%E9%A1%B5%E9%9D%A2%E6%90%AD%E5%BB%BA/" title="1.hexo+next友情链接页面搭建">https://kinghtxg.github.io/系统运维/hexo相关/运维相关/hexo/1.hexo+next友情链接页面搭建/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/5.%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8/" rel="prev" title="5.布尔盲注">
+                  <i class="fa fa-chevron-left"></i> 5.布尔盲注
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/CTF%E8%A7%A3%E9%A2%98/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/CTF%E8%A7%A3%E9%A2%98/6.%E5%90%88%E5%A4%A9%E7%BD%91%E5%AE%89%E7%AC%AC%E5%85%AD%E9%A2%98-%E5%A5%97%E5%A8%83%E4%B8%80%E6%A0%B7%E7%9A%84%E4%B8%8A%E4%BC%A0%20/" rel="next" title="6.合天网安第六题-套娃一样的上传">
+                  6.合天网安第六题-套娃一样的上传 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

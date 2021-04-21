@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="列表、字符串、元组、字典、集合这些可迭代对象都会因为内存大小被限制，而迭代器是一个数据流，单次只会将一个值放入内存，就没有了这个限制 现在需求是一个无限大小的数据类型，所以需要用到迭代器，但用文件来完成又不合适，这时候就需要用到自定义迭代器，也就是生成器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="22.python生成器">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/22.python%E7%94%9F%E6%88%90%E5%99%A8/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="列表、字符串、元组、字典、集合这些可迭代对象都会因为内存大小被限制，而迭代器是一个数据流，单次只会将一个值放入内存，就没有了这个限制 现在需求是一个无限大小的数据类型，所以需要用到迭代器，但用文件来完成又不合适，这时候就需要用到自定义迭代器，也就是生成器">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201229173758447.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20210102145222369.png">
+<meta property="article:published_time" content="2021-01-23T09:33:01.000Z">
+<meta property="article:modified_time" content="2021-01-11T07:09:58.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201229173758447.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/22.python%E7%94%9F%E6%88%90%E5%99%A8/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>22.python生成器 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">自定义的迭代器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%9D%E5%A4%96%E5%B0%8F%E7%9F%A5%E8%AF%86"><span class="nav-number">1.0.1.</span> <span class="nav-text">额外小知识</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E6%A1%88%E4%BE%8Brange"><span class="nav-number">1.1.</span> <span class="nav-text">演示案例range</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E9%97%AE%E9%A2%98%EF%BC%9A%E7%94%9F%E6%88%90%E5%99%A8%E6%98%AF%E5%90%A6%E8%83%BD%E8%A2%ABlist"><span class="nav-number">1.1.1.</span> <span class="nav-text">小问题：生成器是否能被list()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#yield%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">yield表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#yield%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%BF%90%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">yield表达式的运行流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">生成式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E7%94%9F%E6%88%90%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">列表生成式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">字典生成式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E7%94%9F%E6%88%90%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">集合生成式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%83%E7%BB%84%E7%94%9F%E6%88%90%E5%BC%8F%EF%BC%9F%E6%98%AF%E6%B2%A1%E6%9C%89%E7%9A%84%EF%BC%8C%E8%BF%99%E5%8F%AB%E7%94%9F%E6%88%90%E5%99%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">元组生成式？是没有的，这叫生成器表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E5%AD%97%E7%AC%A6"><span class="nav-number">3.4.1.</span> <span class="nav-text">案例：统计文件字符</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/22.python%E7%94%9F%E6%88%90%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          22.python生成器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-23 17:33:01" itemprop="dateCreated datePublished" datetime="2021-01-23T17:33:01+08:00">2021-01-23</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-11 15:09:58" itemprop="dateModified" datetime="2021-01-11T15:09:58+08:00">2021-01-11</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.1k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>列表、字符串、元组、字典、集合这些可迭代对象都会因为内存大小被限制，而迭代器是一个数据流，单次只会将一个值放入内存，就没有了这个限制</p>
+<p>现在需求是一个无限大小的数据类型，所以需要用到迭代器，但用文件来完成又不合适，这时候就需要用到自定义迭代器，也就是生成器</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="自定义的迭代器"><a href="#自定义的迭代器" class="headerlink" title="自定义的迭代器"></a>自定义的迭代器</h1><p>在函数内一旦存在<strong>yield关键字</strong>,<strong>调用函数并不会执行函数体代码</strong>，会返回一个<strong>生成器对象</strong>，生成器即自定义的迭代器</p>
+<p>ps：函数本身不是迭代器，返回的才是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span>():</span></span><br><span class="line">    print(<span class="string">&quot;第一次&quot;</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">1</span></span><br><span class="line">    print(<span class="string">&quot;第二次&quot;</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">2</span></span><br><span class="line">    print(<span class="string">&quot;第三次&quot;</span>)</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">3</span></span><br><span class="line">g = func()</span><br><span class="line">print(g) <span class="comment"># &lt;generator object func at 0x0000020F51A47BA0&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成器就是迭代器</span></span><br><span class="line"><span class="comment"># g_iter =  g.__iter__() # 可不写，写不写不会有任何变化</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 会触发函数体代码的运行,将yield后面的值当作本次调用的结果</span></span><br><span class="line">g.__next__() <span class="comment"># 第一次</span></span><br><span class="line">res = g.__next__() <span class="comment"># 第二次</span></span><br><span class="line">res2 = g.__next__() <span class="comment"># 第三次</span></span><br><span class="line">print(<span class="string">&#x27;res=%s,res=%s&#x27;</span>%(res,res2))</span><br><span class="line"><span class="comment"># 同样超出取值次数超过元素数，则报错StopIteration</span></span><br><span class="line"><span class="comment"># g.__next__() # StopIteration</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="额外小知识"><a href="#额外小知识" class="headerlink" title="额外小知识"></a>额外小知识</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 他们是同样操作的不同写法</span></span><br><span class="line">len(a)  a.__len__()</span><br><span class="line">iter(g) g.__iter__()</span><br><span class="line">next(g) g.__next__()</span><br></pre></td></tr></table></figure>
+
+<h2 id="演示案例range"><a href="#演示案例range" class="headerlink" title="演示案例range"></a>演示案例range</h2><p>range我们之前已经接触过了，这里使用yield来写一个自己的range</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_range</span>(<span class="params">start,stop,step=<span class="number">1</span></span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;my_range(起始位置，结束位置，步长)&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> start&lt;stop:</span><br><span class="line">        <span class="keyword">yield</span> start</span><br><span class="line">        start += step</span><br><span class="line">g = my_range(<span class="number">1</span>,<span class="number">5</span>,<span class="number">2</span>)</span><br><span class="line">print(next(g)) <span class="comment"># 1</span></span><br><span class="line">print(next(g)) <span class="comment"># 3</span></span><br><span class="line"><span class="comment"># print(next(g)) # StopIteration</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> my_range(<span class="number">1</span>,<span class="number">7</span>,<span class="number">2</span>):</span><br><span class="line">    print(n) <span class="comment"># 可以直接for循环</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="小问题：生成器是否能被list"><a href="#小问题：生成器是否能被list" class="headerlink" title="小问题：生成器是否能被list()"></a>小问题：生成器是否能被list()</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>():</span></span><br><span class="line">    count =<span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">yield</span> count</span><br><span class="line">g = add()</span><br><span class="line">list(g)</span><br></pre></td></tr></table></figure>
+
+<p>答案是可以的，list原理和for循环是一样的，会不停的将值放入列表，就会导致内存开始爆炸</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201229173758447.png" alt="image-20201229173758447"></p>
+<hr>
+<h1 id="yield表达式"><a href="#yield表达式" class="headerlink" title="yield表达式"></a>yield表达式</h1><p>yield有两个功能，一个就是控制返回值，而另一个则是接受传值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># x = yield 返回值</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dog</span>(<span class="params">name</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;dog%s准备吃东西了&#x27;</span>%name)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="comment"># x 拿到的是yield接收到的值</span></span><br><span class="line">        x = <span class="keyword">yield</span> <span class="literal">None</span></span><br><span class="line">        print(<span class="string">&#x27;dog%s吃了%s&#x27;</span>%(name,x))</span><br><span class="line"></span><br><span class="line">g = dog(<span class="string">&#x27;xin&#x27;</span>)</span><br><span class="line"><span class="comment"># 函数完成赋值的时候，还没有运行函数体代码，这时候直接进行赋值，找不到yield对于的x，所以会报错</span></span><br><span class="line"><span class="comment"># g.send(&#x27;一根骨头&#x27;) # can&#x27;t send non-None value to a just-started generator</span></span><br><span class="line"><span class="comment"># 使用next或者send(none)让他暂停到yield那个位置上去</span></span><br><span class="line">next(g) <span class="comment"># 等同于g.send(none)</span></span><br><span class="line">g.send(<span class="string">&#x27;一根骨头&#x27;</span>) <span class="comment"># 给yield传值</span></span><br><span class="line">next(g) <span class="comment"># 等同于g.send(none)  dogxin吃了None</span></span><br><span class="line">g.send(<span class="string">&#x27;肉包子&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27; </span></span><br><span class="line"><span class="string">输出结果：</span></span><br><span class="line"><span class="string">dogxin准备吃东西了</span></span><br><span class="line"><span class="string">dogxin吃了一根骨头</span></span><br><span class="line"><span class="string">dogxin吃了None</span></span><br><span class="line"><span class="string">dogxin吃了肉包子</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">g.close() <span class="comment"># 关闭之后无法传值</span></span><br><span class="line">g.send(<span class="string">&#x27;111&#x27;</span>) <span class="comment"># 报错StopIteration</span></span><br><span class="line"><span class="comment"># 同样yield也支持解压复制和列表传值</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="yield表达式的运行流程"><a href="#yield表达式的运行流程" class="headerlink" title="yield表达式的运行流程"></a>yield表达式的运行流程</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dog</span>(<span class="params">name</span>):</span></span><br><span class="line">    food_list = []</span><br><span class="line">    print(<span class="string">&#x27;dog%s准备吃东西了&#x27;</span>%name)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        x = <span class="keyword">yield</span> food_list</span><br><span class="line">        print(<span class="string">&#x27;dog %s 吃了 %s&#x27;</span>%(name,x))</span><br><span class="line">        food_list.append(x)</span><br><span class="line">g = dog(<span class="string">&#x27;xin&#x27;</span>)</span><br><span class="line">res = g.send(<span class="literal">None</span>)</span><br><span class="line">print(res)</span><br><span class="line">res = g.send(<span class="string">&#x27;骨头&#x27;</span>)</span><br><span class="line">print(res) <span class="comment"># None</span></span><br><span class="line">res = g.send(<span class="string">&#x27;包子&#x27;</span>)</span><br><span class="line">print(res)</span><br></pre></td></tr></table></figure>
+
+<p>代码从上而下进入，<code>res = g.send(None)</code>相当于next，运行到yield，返回的food_list为空列表，然后，暂停住了，运行外部代码<code>res = g.send(&#39;骨头&#39;)</code>，send把<code>骨头</code>交给了yield，yield交给了x，继续运行，运行到<code>food_list.append(x)</code>，然后开启下一次循环，又遇到了yield，返回了这一次的结果food_list = [‘骨头’] 依此类推</p>
+<p>代码调用时检测到有yield就会暂停等待send/next，得到命令后需要遇到下一个yield再返回本次结果，并且暂停住等待调用</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20210102145222369.png" alt="image-20210102145222369"></p>
+<hr>
+<h1 id="生成式"><a href="#生成式" class="headerlink" title="生成式"></a>生成式</h1><p>生成式顾名思义就是生成东西，其实就是把循环添加过程给简化了</p>
+<h2 id="列表生成式"><a href="#列表生成式" class="headerlink" title="列表生成式"></a>列表生成式</h2><p>列表生成式是为了我们简化代码的一种解决方案，用来快速生成列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">l = [<span class="string">&#x27;yzc_one&#x27;</span>,<span class="string">&#x27;lbg_one&#x27;</span>,<span class="string">&#x27;amber_two&#x27;</span>,<span class="string">&#x27;aym_two&#x27;</span>]</span><br><span class="line">one_l = []</span><br><span class="line">two_l = []</span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> l:</span><br><span class="line">    <span class="comment"># endswith如果字符串含有指定的后缀返回 True，否则返回 False。</span></span><br><span class="line">    <span class="keyword">if</span> name.endswith(<span class="string">&#x27;one&#x27;</span>):</span><br><span class="line">        one_l.append(name)</span><br><span class="line">print(one_l)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列表生成式</span></span><br><span class="line">two_l = [name <span class="keyword">for</span> name <span class="keyword">in</span> l <span class="keyword">if</span> name.endswith(<span class="string">&#x27;two&#x27;</span>)]</span><br><span class="line"><span class="comment"># 列表生成式分为三部分 [结果 for循环 if判断]</span></span><br><span class="line"><span class="comment"># 上诉含义：for name in l 进行循环 if name.endswith(&#x27;two&#x27;) 判断成立，就将第一个name放入列表中</span></span><br><span class="line">print(two_l)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以不加if判断，就相当于if恒成立,name全部会被放入新列表</span></span><br><span class="line">three = [name <span class="keyword">for</span> name <span class="keyword">in</span> l]</span><br><span class="line">print(three) <span class="comment"># [&#x27;yzc_one&#x27;, &#x27;lbg_one&#x27;, &#x27;amber_two&#x27;, &#x27;aym_two&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<p>案例练习</p>
+<p>把所有小写字母全都变成大写字母，把所有的one名字全去掉后缀</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">l = [<span class="string">&#x27;yzc_one&#x27;</span>,<span class="string">&#x27;lbg_one&#x27;</span>,<span class="string">&#x27;amber_two&#x27;</span>,<span class="string">&#x27;aym_two&#x27;</span>]</span><br><span class="line"><span class="comment"># 把所有小写字母全都变成大写字母</span></span><br><span class="line"><span class="comment"># string.lower()大写转小写 string.upper()小写转大写</span></span><br><span class="line">new_l1 = [name.upper() <span class="keyword">for</span> name <span class="keyword">in</span> l]</span><br><span class="line">print(new_l1) <span class="comment"># [&#x27;YZC_ONE&#x27;, &#x27;LBG_ONE&#x27;, &#x27;AMBER_TWO&#x27;, &#x27;AYM_TWO&#x27;]</span></span><br><span class="line"><span class="comment"># 把所有的one名字全去掉后缀</span></span><br><span class="line">new_l2 = [name.split(<span class="string">&#x27;_&#x27;</span>)[<span class="number">0</span>] <span class="keyword">for</span> name <span class="keyword">in</span> l <span class="keyword">if</span> name.endswith(<span class="string">&#x27;one&#x27;</span>)]</span><br><span class="line">print(new_l2) <span class="comment"># [&#x27;yzc&#x27;, &#x27;lbg&#x27;]</span></span><br><span class="line">new_l3 = [name.replace(<span class="string">&#x27;_one&#x27;</span>,<span class="string">&#x27;&#x27;</span>) <span class="keyword">for</span> name <span class="keyword">in</span> l]</span><br><span class="line">print(new_l3) <span class="comment"># [&#x27;yzc&#x27;, &#x27;lbg&#x27;, &#x27;amber_two&#x27;, &#x27;aym_two&#x27;]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="字典生成式"><a href="#字典生成式" class="headerlink" title="字典生成式"></a>字典生成式</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">keys = [<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;age&#x27;</span>,<span class="string">&#x27;gender&#x27;</span>]</span><br><span class="line">items = &#123;key:<span class="literal">None</span> <span class="keyword">for</span> key <span class="keyword">in</span> keys&#125;</span><br><span class="line">print(items)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成字典不要gender</span></span><br><span class="line">item = [(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;egon&#x27;</span>),(<span class="string">&#x27;age&#x27;</span>,<span class="number">18</span>),(<span class="string">&#x27;gender&#x27;</span>,<span class="string">&#x27;male&#x27;</span>)]</span><br><span class="line"><span class="comment"># 转换为字典，但不要gender这一组</span></span><br><span class="line"><span class="comment"># k,v in item 为解压操作</span></span><br><span class="line">res = &#123;k:v <span class="keyword">for</span> k,v <span class="keyword">in</span> item <span class="keyword">if</span> k != <span class="string">&#x27;gender&#x27;</span>&#125;</span><br><span class="line">print(res)</span><br></pre></td></tr></table></figure>
+
+<h2 id="集合生成式"><a href="#集合生成式" class="headerlink" title="集合生成式"></a>集合生成式</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">l = [<span class="string">&#x27;kinght&#x27;</span>,<span class="string">&#x27;yzc&#x27;</span>,<span class="string">&#x27;aym&#x27;</span>,<span class="string">&#x27;lbg&#x27;</span>]</span><br><span class="line">dict = &#123;name <span class="keyword">for</span> name <span class="keyword">in</span> l&#125;</span><br><span class="line">print(dict)</span><br></pre></td></tr></table></figure>
+
+<h2 id="元组生成式？是没有的，这叫生成器表达式"><a href="#元组生成式？是没有的，这叫生成器表达式" class="headerlink" title="元组生成式？是没有的，这叫生成器表达式"></a>元组生成式？是没有的，这叫生成器表达式</h2><p>上面的都是为了引入这个</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">g = (i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>) <span class="keyword">if</span> i&gt;<span class="number">3</span>)</span><br><span class="line">print(g,type(g)) <span class="comment"># &lt;generator object &lt;genexpr&gt; at 0x00000120D0937BA0&gt; &lt;class &#x27;generator&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>报错显示，这是一个生成器对象，我们先回到生成式，生成式的本质是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">    <span class="keyword">if</span> i &gt; <span class="number">3</span> :</span><br><span class="line">        g.append</span><br></pre></td></tr></table></figure>
+
+<p>而g是元组，元组是无序的无法执行append，就无法成为生成式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">g = (i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>) <span class="keyword">if</span> i&lt;<span class="number">3</span>)</span><br><span class="line">print(g.__next__())</span><br><span class="line">print(g.__next__())</span><br><span class="line">print(g.__next__())</span><br></pre></td></tr></table></figure>
+
+<p>所以其实生成的是生成器</p>
+<h3 id="案例：统计文件字符"><a href="#案例：统计文件字符" class="headerlink" title="案例：统计文件字符"></a>案例：统计文件字符</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方案一 ： 代码太复杂</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    res = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">        res += len(line)</span><br><span class="line">    print(res)</span><br><span class="line"></span><br><span class="line"><span class="comment"># sum ： 求累加和 sum += xx 支持可迭代对象</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方案二 ： 如果文件行数过多也会造成内存负担</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    res = sum([len(line) <span class="keyword">for</span> line <span class="keyword">in</span> f])</span><br><span class="line">    print(res)</span><br><span class="line"><span class="comment"># 方案三 ： 使用生成器 - 每次只出现一行代码</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 这里直接生成可迭代对象</span></span><br><span class="line">    res = sum((len(line) <span class="keyword">for</span> line <span class="keyword">in</span> f))</span><br><span class="line">    print(res)</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>, mode=<span class="string">&#x27;rt&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="comment"># 这里可以省略一组括号，默认识别为生成器</span></span><br><span class="line">    res1 = sum(len(line) <span class="keyword">for</span> line <span class="keyword">in</span> f)</span><br><span class="line">    print(res1)</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/22.python%E7%94%9F%E6%88%90%E5%99%A8/" title="22.python生成器">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/22.python生成器/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/21.python%E8%BF%AD%E4%BB%A3%E5%99%A8/" rel="prev" title="21.python迭代器">
+                  <i class="fa fa-chevron-left"></i> 21.python迭代器
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="‘器’指的是工具&#x2F;器具 ‘装饰’指的是为其他事物添加额外的东西点缀 装饰器指的是定义一个函数(或者类)，该函数是用来装饰其他函数的(为其他函数添加额外的功能)，准确的说装饰器的作用就是在不修改被装饰对象源代码和调用方式的前提下为被装饰对象添加额外的功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="20.python装饰器">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/20.python%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="‘器’指的是工具&#x2F;器具 ‘装饰’指的是为其他事物添加额外的东西点缀 装饰器指的是定义一个函数(或者类)，该函数是用来装饰其他函数的(为其他函数添加额外的功能)，准确的说装饰器的作用就是在不修改被装饰对象源代码和调用方式的前提下为被装饰对象添加额外的功能">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-23T09:12:01.000Z">
+<meta property="article:modified_time" content="2021-01-02T02:21:38.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/20.python%E8%A3%85%E9%A5%B0%E5%99%A8/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>20.python装饰器 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E6%94%BE%E5%B0%81%E9%97%AD%E5%8E%9F%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">开放封闭原则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">装饰器的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%B7%E6%A2%81%E6%8D%A2%E6%9F%B1%E7%9A%84%E8%A6%81%E6%B1%82"><span class="nav-number">2.1.</span> <span class="nav-text">偷梁换柱的要求</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95%E7%B3%96"><span class="nav-number">3.</span> <span class="nav-text">语法糖</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%A0%E5%8A%A0%E5%A4%9A%E4%B8%AA%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="nav-number">3.1.</span> <span class="nav-text">叠加多个装饰器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B0%E5%BA%95%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">3.2.</span> <span class="nav-text">@到底做了什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A0%E5%8F%82%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E6%9D%BF"><span class="nav-number">4.</span> <span class="nav-text">无参装饰器模板</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E4%BC%AA%E8%A3%85%E5%8F%8A%E8%A2%AB%E8%A3%85%E9%A5%B0%E5%AF%B9%E8%B1%A1%E6%96%87%E6%A1%A3%E5%90%8C%E6%AD%A5"><span class="nav-number">5.</span> <span class="nav-text">装饰器伪装及被装饰对象文档同步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#name-%E4%BC%AA%E8%A3%85"><span class="nav-number">5.1.</span> <span class="nav-text">__name__伪装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A2%AB%E8%A3%85%E9%A5%B0%E5%AF%B9%E8%B1%A1%E6%96%87%E6%A1%A3%E5%90%8C%E6%AD%A5"><span class="nav-number">5.2.</span> <span class="nav-text">被装饰对象文档同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%89%8B%E5%8A%A8%E4%BC%AA%E8%A3%85%E4%BF%AE%E9%A5%B0%E5%99%A8%E6%80%9D%E8%B7%AF"><span class="nav-number">5.3.</span> <span class="nav-text">基本手动伪装修饰器思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E4%BC%AA%E8%A3%85%E4%BF%AE%E9%A5%B0%E5%99%A8"><span class="nav-number">5.4.</span> <span class="nav-text">自动伪装修饰器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%89%E5%8F%82%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="nav-number">6.</span> <span class="nav-text">有参装饰器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E6%BC%94%E7%A4%BA"><span class="nav-number">6.1.</span> <span class="nav-text">案例演示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%E5%8F%82%E6%95%B0%E5%8F%AF%E4%BB%A5%E5%A4%9A%E4%B8%AA"><span class="nav-number">6.2.</span> <span class="nav-text">第三层参数可以多个</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%89%E5%8F%82%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E6%9D%BF"><span class="nav-number">7.</span> <span class="nav-text">有参装饰器模板</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/20.python%E8%A3%85%E9%A5%B0%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          20.python装饰器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-23 17:12:01" itemprop="dateCreated datePublished" datetime="2020-12-23T17:12:01+08:00">2020-12-23</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-02 10:21:38" itemprop="dateModified" datetime="2021-01-02T10:21:38+08:00">2021-01-02</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.6k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>‘器’指的是工具/器具</p>
+<p>‘装饰’指的是为其他事物添加额外的东西点缀</p>
+<p>装饰器指的是定义一个函数(或者类)，该函数是用来装饰其他函数的(为其他函数添加额外的功能)，准确的说<strong>装饰器的作用就是在不修改被装饰对象源代码和调用方式的前提下为被装饰对象添加额外的功能</strong></p>
+<a id="more"></a>
+
+<hr>
+<h1 id="开放封闭原则"><a href="#开放封闭原则" class="headerlink" title="开放封闭原则"></a>开放封闭原则</h1><p>软件的设计应该遵循开放封闭原则</p>
+<p><strong>开放：对拓展功能是开放的</strong></p>
+<p><strong>封闭：对修改源代码是封闭的</strong></p>
+<p>对拓展功能开放，意味着有新的需求或变化时，可以对现有代码进行扩展，以适应新的情况。对修改封闭，意味着函数/对象一旦设计完成，就可以独立完成其工作，而不要对其进行修改。</p>
+<p>软件包含的所有功能的源代码以及调用方式，都应该避免修改，否则一旦改错，则极有可能产生连锁反应，最终导致程序崩溃，而对于上线后的软件，新需求或者变化又层出不穷，我们必须为程序提供扩展的可能性，这就用到了装饰器。</p>
+<hr>
+<h1 id="装饰器的实现"><a href="#装饰器的实现" class="headerlink" title="装饰器的实现"></a>装饰器的实现</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">name,age</span>):</span></span><br><span class="line">    time.sleep(<span class="number">3</span>) <span class="comment"># 暂停3秒</span></span><br><span class="line">    print(<span class="string">&#x27;name:%s,age:%s&#x27;</span> %(name,age))</span><br><span class="line">index(<span class="string">&#x27;kinght&#x27;</span>,<span class="string">&#x27;20&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>需求：在不修改index函数源代码以及调用方式的情况下为其添加统计运行时间的功能</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y,z</span>):</span> <span class="comment"># index函数源代码没有改变</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    print(<span class="string">&#x27;index x=%s y=%s z=%s&#x27;</span>%(x,y,z))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;index&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span>(<span class="params">name</span>):</span></span><br><span class="line">    time.sleep(<span class="number">5</span>)</span><br><span class="line">    print(<span class="string">&#x27;welcome %s to home page&#x27;</span>%name)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">timmer</span>(<span class="params">func</span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;计算运行时长的装饰器&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span> <span class="comment"># 可以接受任意参数</span></span><br><span class="line">        start = time.time()  <span class="comment"># time.time 从uninx元年(1970年1月1日)到现在的秒</span></span><br><span class="line">        res = func(*args,**kwargs) <span class="comment"># 传递函数的参数,并接受返回值</span></span><br><span class="line">        stop = time.time()</span><br><span class="line">        print(stop - start)</span><br><span class="line">        <span class="keyword">return</span> res <span class="comment"># 返回被装饰函数的返回值</span></span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line">index = timmer(index) <span class="comment"># timmer(待测量运行时长的函数名)</span></span><br><span class="line">res = index(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>) <span class="comment"># 使用者调用方式没有改变,但增加了程序运行计算时长的功能</span></span><br><span class="line">print(res)</span><br><span class="line">print(index.__name__) <span class="comment"># 返回真实的函数名</span></span><br><span class="line">home = timmer(home) <span class="comment"># 也可以装饰其他对象</span></span><br><span class="line">home(<span class="string">&#x27;kinght&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="偷梁换柱的要求"><a href="#偷梁换柱的要求" class="headerlink" title="偷梁换柱的要求"></a>偷梁换柱的要求</h2><p>index的参数什么样子，wrapper的参数就应该什么样子</p>
+<p>index的返回值什么样子，wrapper的返回值就应该什么样子</p>
+<p>index的属性什么样子，wrapper的属性就应该什么样子（下文伪装装饰器实现）</p>
+<hr>
+<h1 id="语法糖"><a href="#语法糖" class="headerlink" title="语法糖"></a>语法糖</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">timmer</span>(<span class="params">func</span>):</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;计算运行时长的装饰器&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span> <span class="comment"># 可以接受任意参数</span></span><br><span class="line">        start = time.time()  <span class="comment"># time.time 从uninx元年(1970年1月1日)到现在的秒</span></span><br><span class="line">        res = func(*args,**kwargs) <span class="comment"># 传递函数的参数,并接受返回值</span></span><br><span class="line">        stop = time.time()</span><br><span class="line">        print(stop - start)</span><br><span class="line">        <span class="keyword">return</span> res <span class="comment"># 返回被装饰函数的返回值</span></span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在被装饰对象的正上方单独一行写@装饰器名字，就可以省略index = timmer(index)</span></span><br><span class="line"><span class="meta">@timmer # 函数必须放于装饰器下方</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y,z</span>):</span> <span class="comment"># index函数源代码没有改变</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line">    print(<span class="string">&#x27;index x=%s y=%s z=%s&#x27;</span>%(x,y,z))</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;index&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># index = timmer(index)</span></span><br><span class="line">index(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="叠加多个装饰器"><a href="#叠加多个装饰器" class="headerlink" title="叠加多个装饰器"></a>叠加多个装饰器</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为了区分进行标识</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">deco1</span>(<span class="params">func1</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper1</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        print(<span class="string">&quot;deco1.wrapper1.func1运行前&quot;</span>)</span><br><span class="line">        res1 = func1(*args,**kwargs)</span><br><span class="line">        print(<span class="string">&quot;deco1.wrapper1.func1运行后&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> res1</span><br><span class="line">    <span class="keyword">return</span> wrapper1</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">deco2</span>(<span class="params">func2</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper2</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        print(<span class="string">&quot;deco2.wrapper2.func2运行前&quot;</span>)</span><br><span class="line">        res2 = func2(*args,**kwargs)</span><br><span class="line">        print(<span class="string">&quot;deco2.wrapper2.func2运行后&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> res2</span><br><span class="line">    <span class="keyword">return</span> wrapper2</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">deco3</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">outter3</span>(<span class="params">func3</span>):</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">wrapper3</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">            print(<span class="string">&quot;outter3.wrapper3.func3运行前&quot;</span>)</span><br><span class="line">            res3 = func3(*args,**kwargs)</span><br><span class="line">            print(<span class="string">&quot;outter3.wrapper3.func3运行后&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> res3</span><br><span class="line">        <span class="keyword">return</span> wrapper3</span><br><span class="line">    <span class="keyword">return</span> outter3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载顺序自下而上</span></span><br><span class="line"><span class="meta">@deco1 # --&gt; index=deco1(wrapper2的内存地址) ==&gt; index = wrapper1的内存地址</span></span><br><span class="line"><span class="meta">@deco2 # --&gt; index=deco2(wrapper3的内存地址) ==&gt; index = wrapper2的内存地址</span></span><br><span class="line"><span class="meta">@deco3(111) #  --&gt; index=outter3(被装饰对象index的内存地址) ==&gt; index = wrapper3的内存地址</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;from index %s:%s&#x27;</span> %(x,y))</span><br><span class="line">print(index) <span class="comment"># 内存地址是wrapper1  &lt;function deco1.&lt;locals&gt;.wrapper1 at 0x0000016EC009ADC0&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行顺序至上而下</span></span><br><span class="line"><span class="comment"># 首先运行deco1，但是执行到func1调用的时候，由于加载，所以知道有deco1调用的是deco2的return，所以会跳转到deco2</span></span><br><span class="line"><span class="comment"># 运行deco2的func2调用，由于加载，所以知道有deco2调用的是deco3的return，所以会跳转到deco3,然后deco3的func来自于index，有调用index</span></span><br><span class="line">index(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">运行结果：</span></span><br><span class="line"><span class="string">&lt;function deco1.&lt;locals&gt;.wrapper1 at 0x000001DF92FC1160&gt;</span></span><br><span class="line"><span class="string">deco1.wrapper1.func1运行前</span></span><br><span class="line"><span class="string">deco2.wrapper2.func2运行前</span></span><br><span class="line"><span class="string">outter3.wrapper3.func3运行前</span></span><br><span class="line"><span class="string">from index 1:2</span></span><br><span class="line"><span class="string">outter3.wrapper3.func3运行后</span></span><br><span class="line"><span class="string">deco2.wrapper2.func2运行后</span></span><br><span class="line"><span class="string">deco1.wrapper1.func1运行后</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="到底做了什么？"><a href="#到底做了什么？" class="headerlink" title="@到底做了什么？"></a>@到底做了什么？</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@print</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span>():</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="comment"># 程序结果输出 &lt;function func at 0x000001CFFE95F040&gt;</span></span><br><span class="line"><span class="comment"># 已知 @函数名 == （被装饰函数名 = 函数名(被装饰函数名)）</span></span><br><span class="line">func = print(func)</span><br><span class="line"></span><br><span class="line"><span class="meta">@print(123) # 名字加括号的优先级是最高的</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span>():</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="comment"># 函数报错：TypeError: &#x27;NoneType&#x27; object is not callable</span></span><br><span class="line"><span class="comment"># @print(123) == (print(123)的返回值被@调用)</span></span><br><span class="line"><span class="comment"># print函数没有返回值，所以为None</span></span><br><span class="line"><span class="comment"># @print == @None</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="无参装饰器模板"><a href="#无参装饰器模板" class="headerlink" title="无参装饰器模板"></a>无参装饰器模板</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 总结：无参装饰器的基本模板</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">outter</span>(<span class="params">func</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        <span class="comment"># 1.调用原函数</span></span><br><span class="line">        <span class="comment"># 2.为其增加新功能</span></span><br><span class="line">        res = func(*args,**kwargs)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"><span class="meta">@outter</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    print(<span class="string">&#x27;from index&#x27;</span>)</span><br><span class="line">index()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="装饰器伪装及被装饰对象文档同步"><a href="#装饰器伪装及被装饰对象文档同步" class="headerlink" title="装饰器伪装及被装饰对象文档同步"></a>装饰器伪装及被装饰对象文档同步</h1><h2 id="name-伪装"><a href="#name-伪装" class="headerlink" title="__name__伪装"></a><code>__name__</code>伪装</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看真实函数信息</span></span><br><span class="line">函数.__name__</span><br><span class="line"><span class="comment"># 装饰器伪装</span></span><br><span class="line">函数wrapper.__name__ = <span class="string">&#x27;原函数名.__name__&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="被装饰对象文档同步"><a href="#被装饰对象文档同步" class="headerlink" title="被装饰对象文档同步"></a>被装饰对象文档同步</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看文档</span></span><br><span class="line">print(help(函数名))</span><br><span class="line">print(函数名.__doc__)</span><br><span class="line"><span class="comment"># 被装饰后由于指向的是装饰器闭包函数，所以查看的是闭包函数文档，而原来的函数文档并不能被查看</span></span><br><span class="line"><span class="comment"># 需要在装饰器中同步</span></span><br><span class="line">函数wrapper.__doc__ = <span class="string">&#x27;原函数.__doc__&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="基本手动伪装修饰器思路"><a href="#基本手动伪装修饰器思路" class="headerlink" title="基本手动伪装修饰器思路"></a>基本手动伪装修饰器思路</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 总结：无参装饰器的基本模板</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">outter</span>(<span class="params">func</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        <span class="comment"># 1.调用原函数</span></span><br><span class="line">        res = func(*args,**kwargs)</span><br><span class="line">        <span class="comment"># 2.为其增加新功能</span></span><br><span class="line">        <span class="comment"># 3.伪装代码</span></span><br><span class="line">        wrapper.__name__ = func.__name__</span><br><span class="line">        wrapper.__doc__ = func.__doc__</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"><span class="meta">@outter</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    print(<span class="string">&#x27;from index&#x27;</span>)</span><br><span class="line">index()</span><br></pre></td></tr></table></figure>
+
+<h2 id="自动伪装修饰器"><a href="#自动伪装修饰器" class="headerlink" title="自动伪装修饰器"></a>自动伪装修饰器</h2><p>由于<code>__xx__</code>太多了，手动写很容易遗漏，python中有一个包可以快速完成这一步</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> wraps</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">outter</span>(<span class="params">func</span>):</span></span><br><span class="line"><span class="meta">    @wraps(func) # wrapper.__xx__ = func.__xx__</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        res = func(*args,**kwargs)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"><span class="meta">@outter</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;这是index文档&#x27;&#x27;&#x27;</span></span><br><span class="line">    print(<span class="string">&#x27;from index&#x27;</span>)</span><br><span class="line">print(index.__name__) <span class="comment"># index</span></span><br><span class="line">print(index.__doc__) <span class="comment"># 这是index文档</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="有参装饰器"><a href="#有参装饰器" class="headerlink" title="有参装饰器"></a>有参装饰器</h1><p>无参装饰器的形成是因为要满足偷梁换柱的要求，所以要让wrapper和被装饰对象保持一致，所以在外面套了一层，而有参装饰器又是在无参函数的外面套了一层，这次是因为语法糖不支持</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 错误演示</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">outter</span>(<span class="params">func,x</span>):</span> <span class="comment"># 假设需要传入两个值语法糖就会报错了</span></span><br><span class="line">    <span class="comment"># func = 函数内存地址</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        res = func(*args,**kwargs)</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    <span class="keyword">return</span> wrapper()</span><br><span class="line"><span class="meta">@outter # outter(index) 需要两个参数，但语法糖只传入了一个参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    print(x,y)</span><br></pre></td></tr></table></figure>
+
+<p>如果说遇到wrapper内还需要参数，我们就只能再往外套一层</p>
+<h2 id="案例演示"><a href="#案例演示" class="headerlink" title="案例演示"></a>案例演示</h2><p>这是对index函数写登陆验证的装饰器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth</span>(<span class="params">func</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        name = input(<span class="string">&quot;your name&gt;&gt;&gt;:&quot;</span>).strip()</span><br><span class="line">        passwd = input(<span class="string">&quot;your passwd&gt;&gt;&gt;:&quot;</span>)</span><br><span class="line">        <span class="comment"># 基于文本文件user的验证方式</span></span><br><span class="line">        <span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>,mode=<span class="string">&#x27;rt&#x27;</span>,encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> userfile:</span><br><span class="line">            <span class="keyword">for</span> user <span class="keyword">in</span> userfile:</span><br><span class="line">                username,password = user.strip().split(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">                <span class="keyword">if</span> name == username <span class="keyword">and</span> passwd == password:</span><br><span class="line">                    res = func(*args,**kwargs)</span><br><span class="line">                    <span class="keyword">return</span> res</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                print(<span class="string">&#x27;your username or password error&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"><span class="meta">@auth</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;index -&gt; %s:%s&#x27;</span> %(x,y))</span><br><span class="line">index(<span class="number">1</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>但是现在有个问题，目前的验证装饰器只能适用于文本文件user，而假如需要使用到其他的函数中，其他函数需要使用例如数据库例如LDAP进行验证，这个装饰器的功能就被局限住了</p>
+<p>由于还没有学到数据库和LDAP，为了让代码更加直观，所以将从文件中去数据的方式进行文字描述，不写具体代码了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth</span>(<span class="params">db_type</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deco</span>(<span class="params">func</span>):</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">            name = input(<span class="string">&#x27;your name&gt;&gt;&gt;:&#x27;</span>).strip()</span><br><span class="line">            pwd = input(<span class="string">&#x27;your passwrod&gt;&gt;&gt;:&#x27;</span>).strip()</span><br><span class="line">            <span class="keyword">if</span> db_type == <span class="string">&#x27;file&#x27;</span>:</span><br><span class="line">                print(<span class="string">&#x27;基于文本的验证&#x27;</span>)</span><br><span class="line">                <span class="keyword">with</span> open(<span class="string">&#x27;user&#x27;</span>, mode=<span class="string">&#x27;rt&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> userfile:</span><br><span class="line">                    <span class="keyword">for</span> user <span class="keyword">in</span> userfile:</span><br><span class="line">                        username, password = user.strip().split(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">                        <span class="keyword">if</span> name == username <span class="keyword">and</span> pwd == password:</span><br><span class="line">                            res = func(*args,**kwargs)</span><br><span class="line">                            <span class="keyword">return</span> res</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        print(<span class="string">&#x27;your username or password error&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> db_type == <span class="string">&#x27;mysql&#x27;</span>:</span><br><span class="line">                print(<span class="string">&#x27;基于mysql的验证&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> db_type == <span class="string">&#x27;ldap&#x27;</span>:</span><br><span class="line">                print(<span class="string">&#x27;基于ldap的验证&#x27;</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                print(<span class="string">&#x27;不支持该验证方式&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> deco</span><br><span class="line"></span><br><span class="line"><span class="comment"># deco = auth(db_type=&#x27;file&#x27;)</span></span><br><span class="line"><span class="comment"># @deco</span></span><br><span class="line"><span class="meta">@auth(db_type=&#x27;file&#x27;)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;index -&gt; %s:%s&#x27;</span> %(x,y))</span><br><span class="line">index(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@auth(db_type=&#x27;mysql&#x27;)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">home</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;home -&gt; %s:%s&#x27;</span> %(x,y))</span><br><span class="line">home(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@auth(db_type=&#x27;ldap&#x27;)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">transfer</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;transfer -&gt; %s:%s&#x27;</span> %(x,y))</span><br><span class="line">transfer(<span class="number">1</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>我们简化看一下这个代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth</span>(<span class="params">db_type</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deco</span>(<span class="params">func</span>):</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> deco</span><br></pre></td></tr></table></figure>
+
+<p>其实就是这么些东西，auth返回deco，deco返回wrapper</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@auth(db_type=&#x27;file&#x27;)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    print(<span class="string">&#x27;index -&gt; %s:%s&#x27;</span> %(x,y))</span><br><span class="line">index(<span class="number">1</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>运行<code>@auth(&#39;file&#39;)</code>等于<code>index = deco(index)</code> + <code>db_type = &#39;file&#39;</code>就等于<code>index = wrapper(1,2)</code> + <code>db_type = &#39;file&#39;</code></p>
+<h2 id="第三层参数可以多个"><a href="#第三层参数可以多个" class="headerlink" title="第三层参数可以多个"></a>第三层参数可以多个</h2><p>装饰器为了参数<code>func</code>而套了两层，还需要参数的时候，为了语法糖套了第三层，但是第三层并没有被限制可以无限套娃，所以装饰器最多三层</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth</span>(<span class="params">db_type,canshu1,canshu2</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deco</span>(<span class="params">func</span>):</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> deco</span><br><span class="line"><span class="meta">@auth(&#x27;file&#x27;,canshu1,canshu2) # 第三层可以无限套娃</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>(<span class="params">x,y</span>):</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line">index(<span class="number">1</span>,<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="有参装饰器模板"><a href="#有参装饰器模板" class="headerlink" title="有参装饰器模板"></a>有参装饰器模板</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 总结：有参装饰器的基本模板</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> 有参装饰器(<span class="params">x,y,z,....</span>)</span></span><br><span class="line"><span class="function">    <span class="title">def</span> <span class="title">outter</span>(<span class="params">func</span>):</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args,**kwargs</span>):</span></span><br><span class="line">            <span class="comment"># 1.调用原函数</span></span><br><span class="line">            <span class="comment"># 2.为其增加新功能</span></span><br><span class="line">            res = func(*args,**kwargs)</span><br><span class="line">            <span class="keyword">return</span> res</span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> outter</span><br><span class="line"><span class="meta">@有参装饰器(x,y,z,....)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span>():</span></span><br><span class="line">    print(<span class="string">&#x27;from index&#x27;</span>)</span><br><span class="line">index()</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/20.python%E8%A3%85%E9%A5%B0%E5%99%A8/" title="20.python装饰器">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/20.python装饰器/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/19.python%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%E4%B8%8E%E9%97%AD%E5%8C%85%E5%87%BD%E6%95%B0/" rel="prev" title="19.python函数对象与闭包函数">
+                  <i class="fa fa-chevron-left"></i> 19.python函数对象与闭包函数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/21.python%E8%BF%AD%E4%BB%A3%E5%99%A8/" rel="next" title="21.python迭代器">
+                  21.python迭代器 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

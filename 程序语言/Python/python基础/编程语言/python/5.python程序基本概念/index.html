@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="其实我们的第一个程序helloworld已经在安装编辑器解释器的过程中完成了，但是为了更好的推进接下来的学习，我们需要对Python的一些概念以及开发环境的操作进行一些阐述">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5.python程序基本概念">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/5.python%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="其实我们的第一个程序helloworld已经在安装编辑器解释器的过程中完成了，但是为了更好的推进接下来的学习，我们需要对Python的一些概念以及开发环境的操作进行一些阐述">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200819003503280.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200819004512119.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200819011645183.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200820172101612.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200820172559401.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200820172523888.png">
+<meta property="article:published_time" content="2020-08-19T00:02:47.000Z">
+<meta property="article:modified_time" content="2020-09-18T17:31:28.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200819003503280.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/5.python%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>5.python程序基本概念 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Python%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">Python运行模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">交互式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">脚本文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%90%E8%A1%8Cpython%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">运行python程序的步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pycharm%E4%B8%8E%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">pycharm与虚拟环境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E5%88%9B%E5%BB%BA%E6%96%B0%E9%A1%B9%E7%9B%AE"><span class="nav-number">3.1.</span> <span class="nav-text">创建虚拟环境创建新项目</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E9%87%8A"><span class="nav-number">4.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pycharm%E8%A7%84%E8%8C%83%E4%BB%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">pycharm规范代码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%A7%84%E8%8C%83%E4%BB%A3%E7%A0%81%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">5.1.</span> <span class="nav-text">修改规范代码快捷键</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/5.python%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          5.python程序基本概念
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-19 08:02:47" itemprop="dateCreated datePublished" datetime="2020-08-19T08:02:47+08:00">2020-08-19</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-19 01:31:28" itemprop="dateModified" datetime="2020-09-19T01:31:28+08:00">2020-09-19</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.2k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>其实我们的第一个程序<code>helloworld</code>已经在安装编辑器解释器的过程中完成了，但是为了更好的推进接下来的学习，我们需要对Python的一些概念以及开发环境的操作进行一些阐述</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="Python运行模式"><a href="#Python运行模式" class="headerlink" title="Python运行模式"></a>Python运行模式</h1><p>Python的运行有两种模式，一种交互式，一种做成脚本文件，交互式模式下可以即时得到代码执行结果，调试程序十分方便，若想将代码永久保存下来，则必须将代码写入脚本文件中</p>
+<h2 id="交互式"><a href="#交互式" class="headerlink" title="交互式"></a>交互式</h2><p>打开idle或者在cmd窗口输入<code>python</code>，进入交互页面，就能直接输入python语句，回车即可执行</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200819003503280.png" alt="image-20200819003503280"></p>
+<h2 id="脚本文件"><a href="#脚本文件" class="headerlink" title="脚本文件"></a>脚本文件</h2><p>以后主要就是在代码写入脚本文件中，偶尔需要打开交互式模式调试某段代码、验证结果</p>
+<p>既：将代码写在一个后缀名为.py的文本文件中</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200819004512119.png" alt="image-20200819004512119"></p>
+<hr>
+<h1 id="运行python程序的步骤"><a href="#运行python程序的步骤" class="headerlink" title="运行python程序的步骤"></a>运行python程序的步骤</h1><p>由于python是解释型语言，没有编译成机器码的过程，所以在运行的时候需要配合不同平台的python解释器，将其解释成为机器语言供机器运行</p>
+<p>在运行python程序的时候</p>
+<ol>
+<li>首先会启动python解释器</li>
+<li>解释器会发送系统调用，将<code>.py</code>文件的内容从硬盘读取到内存，此时的文件还都是普通字符，没有任何意义</li>
+<li>解释器开始逐条解释执行刚刚读入内存的<code>.py</code>文件代码，并识别python语法</li>
+</ol>
+<hr>
+<h1 id="pycharm与虚拟环境"><a href="#pycharm与虚拟环境" class="headerlink" title="pycharm与虚拟环境"></a>pycharm与虚拟环境</h1><p>虚拟环境是python中非常重要的一个概念</p>
+<p>因为python有非常多的包，来简化我们的开发，减少我们的代码量，减少迁移项目位置时候的繁琐、避免重复造轮子的过程，而包之间难免会产生重复的函数冲突，所以把所有的包全都下载在自己的开发环境中是一种非常不理智的行为</p>
+<p>python的大佬们就想出了一个好的办法，就是用虚拟环境，把每一个项目的环境单独隔离出来，互不影响</p>
+<p>由于创建python虚拟环境的方式太多，比如<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/60647332">virtualenv、conda、Virtualenvwrapper</a>，而恰好后续需要大量使用pycharm，所以这里就直接以pycharm为例创建虚拟机环境创建项目</p>
+<h2 id="创建虚拟环境创建新项目"><a href="#创建虚拟环境创建新项目" class="headerlink" title="创建虚拟环境创建新项目"></a>创建虚拟环境创建新项目</h2><p>我们创建新项目的时候如图选择使用python虚拟环境进行项目创建</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200819011645183.png" alt="image-20200819011645183"></p>
+<hr>
+<h1 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h1><p>在代码中，我们通常为了方便朋友和自己的阅读，需要将部分代码的功能和用法记录下来，这一部分的代码不能被编译器或者解释器说执行，所以就有了注释的概念</p>
+<p>注释就是对代码的解释和说明，其目的是让人们能够更加轻松地了解代码。注释是编写程序时，写程序的人给一个语句、程序段、函数等的解释或提示，能提高程序代码的可读性。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">这是一个多行注释</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">这也是一个多行注释</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">print(<span class="string">&#x27;helloworld&#x27;</span>)  <span class="comment"># 这是一个单行注释</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>按照PEP8规范，单行注释应在代码后空两格</p>
+</blockquote>
+<hr>
+<h1 id="pycharm规范代码"><a href="#pycharm规范代码" class="headerlink" title="pycharm规范代码"></a>pycharm规范代码</h1><p>按照PEP8规范格式化代码</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200820172101612.png" alt="image-20200820172101612"></p>
+<h2 id="修改规范代码快捷键"><a href="#修改规范代码快捷键" class="headerlink" title="修改规范代码快捷键"></a>修改规范代码快捷键</h2><p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200820172559401.png" alt="image-20200820172559401"></p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200820172523888.png" alt="image-20200820172523888"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/5.python%E7%A8%8B%E5%BA%8F%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" title="5.python程序基本概念">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/5.python程序基本概念/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/8.%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5/" rel="prev" title="8.宽字节注入">
+                  <i class="fa fa-chevron-left"></i> 8.宽字节注入
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/6.python%E8%AF%AD%E6%B3%95%E5%85%A5%E9%97%A8%E4%B9%8B%E5%8F%98%E9%87%8F/" rel="next" title="6.python语法入门之变量">
+                  6.python语法入门之变量 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

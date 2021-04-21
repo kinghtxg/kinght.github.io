@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="存储器存储器是计算机的记忆单元，其核心功能就是存取数据 人们对存储器的希望总是容量大的、快速的、便宜的，但这三点是冲突的，不可能同时满足 所以基于目前的工艺水平，存储器就被分层了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4.计算机基础之简述存储器、总线、系统启动流程">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/4.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E5%AD%98%E5%82%A8%E5%99%A8%E3%80%81%E6%80%BB%E7%BA%BF%E3%80%81%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="存储器存储器是计算机的记忆单元，其核心功能就是存取数据 人们对存储器的希望总是容量大的、快速的、便宜的，但这三点是冲突的，不可能同时满足 所以基于目前的工艺水平，存储器就被分层了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814112205280.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814151349121.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814151058728.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814224509097.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814224645937.png">
+<meta property="article:published_time" content="2020-08-14T05:50:47.000Z">
+<meta property="article:modified_time" content="2020-09-18T17:31:20.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814112205280.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/4.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E5%AD%98%E5%82%A8%E5%99%A8%E3%80%81%E6%80%BB%E7%BA%BF%E3%80%81%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>4.计算机基础之简述存储器、总线、系统启动流程 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%8D%B3L1%E7%BC%93%E5%AD%98"><span class="nav-number">1.1.</span> <span class="nav-text">寄存器即L1缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%8D%B3L2%E7%BC%93%E5%AD%98"><span class="nav-number">1.2.</span> <span class="nav-text">高速缓存即L2缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98RAM"><span class="nav-number">1.3.</span> <span class="nav-text">内存RAM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AA%E8%AF%BB%E5%86%85%E5%AD%98ROM"><span class="nav-number">1.4.</span> <span class="nav-text">只读内存ROM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CMOS"><span class="nav-number">1.5.</span> <span class="nav-text">CMOS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E7%9B%98"><span class="nav-number">1.6.</span> <span class="nav-text">硬盘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98"><span class="nav-number">1.6.1.</span> <span class="nav-text">机械硬盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">1.6.2.</span> <span class="nav-text">虚拟内存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E5%B8%A6"><span class="nav-number">1.7.</span> <span class="nav-text">磁带</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O%E8%AE%BE%E5%A4%87"><span class="nav-number">1.8.</span> <span class="nav-text">I&#x2F;O设备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="nav-number">1.8.1.</span> <span class="nav-text">控制器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%9C%AC%E8%BA%AB"><span class="nav-number">1.8.2.</span> <span class="nav-text">设备本身</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BA%BF"><span class="nav-number">2.</span> <span class="nav-text">总线</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">启动流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">操作系统的启动流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">应用启动流程</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/4.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E5%AD%98%E5%82%A8%E5%99%A8%E3%80%81%E6%80%BB%E7%BA%BF%E3%80%81%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          4.计算机基础之简述存储器、总线、系统启动流程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-14 13:50:47" itemprop="dateCreated datePublished" datetime="2020-08-14T13:50:47+08:00">2020-08-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-19 01:31:20" itemprop="dateModified" datetime="2020-09-19T01:31:20+08:00">2020-09-19</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.8k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="存储器"><a href="#存储器" class="headerlink" title="存储器"></a>存储器</h1><p>存储器是计算机的记忆单元，其核心功能就是存取数据</p>
+<p>人们对存储器的希望总是容量大的、快速的、便宜的，但这三点是冲突的，不可能同时满足</p>
+<p>所以基于目前的工艺水平，存储器就被分层了</p>
+<a id="more"></a>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814112205280.png" alt="image-20200814112205280"></p>
+<p>存储器系统采用如上图的分层结构，顶层的存储器速度较高，容量较小，与底层的存储器相比每位的成本较高，其差别往往是十亿数量级的</p>
+<p>之前已经提到过，由于存储器与存储器、存储器与CPU之间有着比较大的速度差，会导致运行效率的降低，所以通常的解决办法就是在存储器与内存之间逐级添加高速缓存和寄存器，来解决这个问题</p>
+<h2 id="寄存器即L1缓存"><a href="#寄存器即L1缓存" class="headerlink" title="寄存器即L1缓存"></a>寄存器即L1缓存</h2><p>用与cpu相同材质制造，与cpu一样快，因而cpu访问它无时延，典型容量是：在32位cpu中为32<em>32，在64位cpu中为64</em>64，在两种情况下容量均&lt;1KB</p>
+<p>寄存器通常放下一秒就会使用到的指令</p>
+<h2 id="高速缓存即L2缓存"><a href="#高速缓存即L2缓存" class="headerlink" title="高速缓存即L2缓存"></a>高速缓存即L2缓存</h2><p>高速缓存则是放需要经常使用到的指令</p>
+<p>主要由硬件控制高速缓存的存取，内存中有高速缓存行按照0<del>64字节为行0，64</del>127为行1。最常用的高速缓存行放置在cpu内部或者非常接近cpu的高速缓存中。当某个程序需要读一个存储字时，高速缓存硬件检查所需要的高速缓存行是否在高速缓存中。如果是，则称为<strong>高速缓存命中</strong>，缓存满足了请求，就不需要通过总线把访问请求送往主存(内存)，这毕竟是慢的。高速缓存的命中通常需要两个时钟周期。<strong>高速缓存为命中</strong>，就必须访问内存，这需要付出大量的时间代价。由于高速缓存价格昂贵，所以其大小有限，有些机器具有两级甚至三级高速缓存，每一级高速缓存比前一级慢但是容易大。</p>
+<h2 id="内存RAM"><a href="#内存RAM" class="headerlink" title="内存RAM"></a>内存RAM</h2><p>RAM(随机存取存储器)，就是我们通常所说的内存，容量一直在不断攀升，所有不能再高速缓存中找到的，都会到主存中找，<strong>主存是易失性存储，断电后数据全部消失</strong></p>
+<h2 id="只读内存ROM"><a href="#只读内存ROM" class="headerlink" title="只读内存ROM"></a>只读内存ROM</h2><p>ROM(只读内存，<strong>非易失性随机访问存储</strong>)，速度和内存相同，但是它只能读，计算机出场时，计算机厂商会在ROM提前写入的一段程序，通常这段程序常常关系到整个计算机系统核心底层的运行，关系到计算机的安全性，所以不允许修改</p>
+<p>这段程序叫做BIOS(基本输入输出操作系统)</p>
+<h2 id="CMOS"><a href="#CMOS" class="headerlink" title="CMOS"></a>CMOS</h2><p>CMOS，存取速度慢，断电数据丢失，但是基于电工做的它，耗电量极低。</p>
+<p>计算机断电后，不联网同步时间的情况下，计算机内部的时间其实还是在工作，是因为主板上面有一个电池，一个时钟芯片，一个CMOS，电池为时钟芯片和CMOS供电，时钟芯片计算时间，然后存储到CMOS中，当然CMOS不止是存时间</p>
+<h2 id="硬盘"><a href="#硬盘" class="headerlink" title="硬盘"></a>硬盘</h2><p>硬盘的典型代表有两种：机械硬盘和固态硬盘</p>
+<h3 id="机械硬盘"><a href="#机械硬盘" class="headerlink" title="机械硬盘"></a>机械硬盘</h3><p>硬盘的存取原理依赖硬盘的转动，机械硬盘的存取数据都是放在盘片上面的，盘片是因为磁来存放数据的，所以也被称为磁盘，数据在磁盘上面其实本质上就是与由高低电频类似的磁信号，对应的二进制信号</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814151349121.png" alt="image-20200814151349121"></p>
+<img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814151058728.png" alt="image-20200814151058728" style="zoom:50%;" />
+
+<p>所有的盘片被固定在一个轴上，盘片的转动，每转一圈磁头读取，被称为磁道，每个磁道划成若干扇区，扇区典型的值是通常为512字节一扇区</p>
+<p>由于硬盘通常是多个盘片组成，所以把同一个戈丁手臂位置上所以的磁道合起来，组成一个柱面，磁盘的分区是从同属一个柱面到另外一个柱面的进行划分</p>
+<blockquote>
+<p>操作系统一次性读写的单位是一个block块</p>
+<p>一个block块=》8扇区大小=4096bytes</p>
+<p>block块可以人为定制大小</p>
+</blockquote>
+<p>数据都存放于一段一段的扇区，即磁道这个圆圈的一小段圆圈，从磁盘读取一段数据需要经历寻道时间和延迟时间</p>
+<blockquote>
+<p>计算机厂商，容量进制是1024</p>
+<p>存储设备厂商，为了符合自己的利益，则规定容量进制不是1024而是1000</p>
+</blockquote>
+<p><strong>IO延迟</strong></p>
+<p>数据都存放于一段一段的扇区，即磁道这个圆圈的一小段圆圈，从磁盘读取一段数据需要经历寻道时间和延迟时间</p>
+<p>平均寻道时间：机械手臂转到数据所在磁道需要花费的时间(受限于物理工艺水平，厂商通常无法决定)</p>
+<p>平均延迟时间：转半圈需要花费的时间</p>
+<p>IO延迟=平均寻道时间+平均延迟时间</p>
+<blockquote>
+<p>优化程序运行效率的核心法则：能从内存取数据，就不要从硬盘取</p>
+</blockquote>
+<h3 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h3><p>许多计算机支持虚拟内存机制，该机制使计算机可以运行大于物理内存的程序，方法是将正在使用的程序放入内存取执行，而暂时不需要执行的程序放到磁盘的某块地方，这块地方成为虚拟内存</p>
+<p>在linux中成为swap，这种机制的核心在于快速地映射内存地址，由cpu中的一个部件负责，成为存储器管理单元(Memory Management Unit MMU)</p>
+<h2 id="磁带"><a href="#磁带" class="headerlink" title="磁带"></a>磁带</h2><p>在价钱相同的情况下比硬盘拥有更高的存储容量，虽然速度低于磁盘，但是因其大容量，在地震水灾火灾时可移动性强等特性，常被用来做备份。（常见于大型数据库系统中）</p>
+<h2 id="I-O设备"><a href="#I-O设备" class="headerlink" title="I/O设备"></a>I/O设备</h2><p>I/O设备一般包括两个部分：设备控制器和设备本身</p>
+<h3 id="控制器"><a href="#控制器" class="headerlink" title="控制器"></a>控制器</h3><p>是查找主板上的一块芯片或一组芯片（硬盘，网卡，声卡等都需要插到一个口上，这个口连的便是控制器），控制器负责控制连接的设备，它从操作系统接收命令，比如读硬盘数据，然后就对硬盘设备发起读请求来读出内容</p>
+<p>控制器的功能：通常情况下对设备的控制是非常复杂和具体的，控制器的任务就是为操作系统屏蔽这些复杂而具体的工作，提供给操作系统一个简单而清晰的接口</p>
+<h3 id="设备本身"><a href="#设备本身" class="headerlink" title="设备本身"></a>设备本身</h3><p>有相对简单的接口且标准的，这样大家都可以为其编写驱动程序了。要想调用设备，必须根据该接口编写复杂而具体的程序，于是有了控制器提供设备驱动接口给操作系统。必须把设备驱动程序安装到操作系统中</p>
+<hr>
+<h1 id="总线"><a href="#总线" class="headerlink" title="总线"></a>总线</h1><p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814224509097.png" alt="image-20200814224509097"></p>
+<p>把计算机拆开大概是这个样子的，有很多的零部件，总线可以简单理解为是这些部件来回传输的线，我们把它归纳为下面这张图</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200814224645937.png" alt="image-20200814224645937"></p>
+<p>上北下南，PCI桥被称为北桥，ISA桥被称为南桥</p>
+<p>PCI桥负责把CPU和内存连接到一起，连接的都是高速设备</p>
+<p>ISA桥负责其他的一些设备，都是一些比较慢速的设备</p>
+<hr>
+<h1 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h1><p>计算机刚刚买回来的时候，如果是裸机，是没有安装系统的，但它却可以直接运行起来，我们之前提到过计算机之所以能运行，肯定是收到软件支配的，那这个软件肯定就是厂商写的，就是我们之前提到的BIOS</p>
+<h2 id="操作系统的启动流程"><a href="#操作系统的启动流程" class="headerlink" title="操作系统的启动流程"></a>操作系统的启动流程</h2><p>1.计算机加电，从ROM中读取BIOS</p>
+<p>2.BIOS开始运行，检测硬件：cpu、内存、硬盘等(在BIOS的操作存放在CMOS中)</p>
+<p>3.BIOS读取CMOS存储器中的参数，选择启动设备</p>
+<p>4.从启动设备上读取第一个扇区的内容（MBR主引导记录512字节，前446为引导信息，后64为分区信息，最后两个为标志位）</p>
+<p>5.根据分区信息读入bootloader启动装载模块，启动操作系统</p>
+<p>6.然后操作系统询问BIOS，以获得配置信息。对于每种设备，系统会检查其设备驱动程序是否存在，如果没有，系统则会要求用户按照设备驱动程序。一旦有了全部的设备驱动程序，操作系统就将它们调入内核。然后初始有关的表格（如进程表），穿件需要的进程，并在每个终端上启动登录程序或GUI</p>
+<h2 id="应用启动流程"><a href="#应用启动流程" class="headerlink" title="应用启动流程"></a>应用启动流程</h2><p>1.双击exe快捷方式–》exe文件的绝对路径</p>
+<p>2.操作系统根据文件路径找到对应的硬盘位置，并将其代码加载到内存</p>
+<p>3.控制CPU从内存中读取刚刚载入内存的应用程序的代码进行执行</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/4.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E5%AD%98%E5%82%A8%E5%99%A8%E3%80%81%E6%80%BB%E7%BA%BF%E3%80%81%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="4.计算机基础之简述存储器、总线、系统启动流程">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/4.计算机基础之简述存储器、总线、系统启动流程/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/3.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0CPU/" rel="prev" title="3.计算机基础之简述CPU">
+                  <i class="fa fa-chevron-left"></i> 3.计算机基础之简述CPU
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/8.%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5/" rel="next" title="8.宽字节注入">
+                  8.宽字节注入 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

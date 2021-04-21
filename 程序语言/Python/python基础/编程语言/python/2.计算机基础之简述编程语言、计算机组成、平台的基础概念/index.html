@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="我们之前已经完成了对于Python解释器与编辑器的安装，在正式进入Python的学习之前，我们还想需要对一些编程的基础进行一些总结回顾  什么是编程语言？编程语言的本质就是人与计算机沟通的语言。 编程语言简史计算机又被称为电脑，人类创造出计算机是为了能够代替部分人们的工作，将庞大的计算工作交给计算机进行，如果计算机无法知晓我们的命令，那他就是一坨废铜烂铁。计算机刚出来的时候使用的是机器语言，机器语">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.计算机基础之简述编程语言、计算机组成、平台的基础概念">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/2.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E3%80%81%E5%B9%B3%E5%8F%B0%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="我们之前已经完成了对于Python解释器与编辑器的安装，在正式进入Python的学习之前，我们还想需要对一些编程的基础进行一些总结回顾  什么是编程语言？编程语言的本质就是人与计算机沟通的语言。 编程语言简史计算机又被称为电脑，人类创造出计算机是为了能够代替部分人们的工作，将庞大的计算工作交给计算机进行，如果计算机无法知晓我们的命令，那他就是一坨废铜烂铁。计算机刚出来的时候使用的是机器语言，机器语">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/1036857-20180314171523158-1421724255.png">
+<meta property="article:published_time" content="2020-08-07T16:56:47.000Z">
+<meta property="article:modified_time" content="2020-09-26T01:05:30.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/1036857-20180314171523158-1421724255.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/2.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E3%80%81%E5%B9%B3%E5%8F%B0%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2.计算机基础之简述编程语言、计算机组成、平台的基础概念 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是编程语言？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%AE%80%E5%8F%B2"><span class="nav-number">1.1.</span> <span class="nav-text">编程语言简史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E8%AF%AD%E8%A8%80%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">高级语言分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E5%9E%8B%E8%AF%AD%E8%A8%80"><span class="nav-number">1.2.1.</span> <span class="nav-text">解释型语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%9E%8B%E8%AF%AD%E8%A8%80"><span class="nav-number">1.2.2.</span> <span class="nav-text">编译型语言</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%88%E7%94%A8%E5%AF%B9%E6%AF%94"><span class="nav-number">1.3.</span> <span class="nav-text">效用对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">计算机组成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E4%BA%94%E5%A4%A7%E9%83%A8%E5%88%86"><span class="nav-number">2.1.</span> <span class="nav-text">计算机的五大部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E7%AE%80%E8%BF%B0"><span class="nav-number">2.2.</span> <span class="nav-text">软件工作流程简述</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B3%E5%8F%B0%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">平台与操作系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E5%8F%B0"><span class="nav-number">3.1.</span> <span class="nav-text">平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.2.</span> <span class="nav-text">操作系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">软件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%88%86%E7%B1%BB"><span class="nav-number">3.3.1.</span> <span class="nav-text">软件分类</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/2.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E3%80%81%E5%B9%B3%E5%8F%B0%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2.计算机基础之简述编程语言、计算机组成、平台的基础概念
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-08 00:56:47" itemprop="dateCreated datePublished" datetime="2020-08-08T00:56:47+08:00">2020-08-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-09-26 09:05:30" itemprop="dateModified" datetime="2020-09-26T09:05:30+08:00">2020-09-26</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.1k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>我们之前已经完成了对于Python解释器与编辑器的安装，在正式进入Python的学习之前，我们还想需要对一些编程的基础进行一些总结回顾</p>
+<hr>
+<h1 id="什么是编程语言？"><a href="#什么是编程语言？" class="headerlink" title="什么是编程语言？"></a>什么是编程语言？</h1><p>编程语言的本质就是人与计算机沟通的语言。</p>
+<h2 id="编程语言简史"><a href="#编程语言简史" class="headerlink" title="编程语言简史"></a>编程语言简史</h2><p>计算机又被称为电脑，人类创造出计算机是为了能够代替部分人们的工作，将庞大的计算工作交给计算机进行，如果计算机无法知晓我们的命令，那他就是一坨废铜烂铁。计算机刚出来的时候使用的是机器语言，机器语言是CPU唯一能够直接读懂的编程语言，最初程序员们是由0和1所代表的打孔条来控制高低电频完成计算机的控制，但这无疑对人们使用计算机的门槛提升到了天堑</p>
+<a id="more"></a>
+
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">#机器语言</span><br><span class="line"></span><br><span class="line">来源:https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;108676916</span><br><span class="line"></span><br><span class="line"> 用二进制代码0和1描述的指令称为机器指令，由于计算机内部是基于二进制指令工作的，所以机器语言是直接控制计算机硬件。</span><br><span class="line"></span><br><span class="line">用机器语言编写程序，编程人员要首先熟记所用计算机的全部指令代码以及代码的含义，然后在编写程序时，程序员得自己处理每条指令和每一数据的存储分配和输入输出，还得记住编程过程中每步所使用的工作单元处在何种状态。这是一件十分繁琐的工作。编写程序花费的时间往往是实际运行时间的几十倍或几百倍。而且，编出的程序全是些0和1的指令代码，直观性差，不便阅读和书写，还容易出错，且依赖于具体的计算机硬件型号，局限性很大。除了计算机生产厂家的专业人员外，绝大多数的程序员已经不再去学习机器语言了。</span><br><span class="line"></span><br><span class="line">机器语言是被微处理器理解和使用的，存在有多至100000种机器语言的指令，下述是一些简单示例</span><br><span class="line"></span><br><span class="line">#指令部份的示例</span><br><span class="line">0000 代表 加载（LOAD）</span><br><span class="line">0001 代表 存储（STORE）</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">#暂存器部份的示例</span><br><span class="line">0000 代表暂存器 A</span><br><span class="line">0001 代表暂存器 B</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">#存储器部份的示例</span><br><span class="line">000000000000 代表地址为 0 的存储器</span><br><span class="line">000000000001 代表地址为 1 的存储器</span><br><span class="line">000000010000 代表地址为 16 的存储器</span><br><span class="line">100000000000 代表地址为 2^11 的存储器</span><br><span class="line"></span><br><span class="line">#集成示例</span><br><span class="line">0000,0000,000000010000 代表 LOAD A, 16</span><br><span class="line">0000,0001,000000000001 代表 LOAD B, 1</span><br><span class="line">0001,0001,000000010000 代表 STORE B, 16</span><br><span class="line">0001,0001,000000000001 代表 STORE B, 1[1]</span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+<p>在前人们的不断努力之下，引入大量助记符，由助记符编译成机器码发明出来汇编语言</p>
+<blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#汇编语言</span></span><br><span class="line">来源:https://zhuanlan.zhihu.com/p/<span class="number">108676916</span></span><br><span class="line">汇编语言的实质和机器语言是相同的，都是直接对硬件操作，只不过指令采用了英文缩写的标识符，更容易识别和记忆。它同样需要编程者将每一步具体的操作用命令的形式写出来。汇编程序的每一句指令只能对应实际操作过程中的一个很细微的动作。例如移动、自增，因此汇编源程序一般比较冗长、复杂、容易出错，而且使用汇编语言编程需要有更多的计算机专业知识，但汇编语言的优点也是显而易见的，用汇编语言所能完成的操作不是一般高级语言所能够实现的，而且源程序经汇编生成的可执行文件不仅比较小，而且执行速度很快。</span><br><span class="line"></span><br><span class="line">汇编的hello world，打印一句hello world, 需要写十多行，如下</span><br><span class="line"></span><br><span class="line">; hello.asm </span><br><span class="line">section .data            ; 数据段声明</span><br><span class="line">        msg db <span class="string">&quot;Hello, world!&quot;</span>, <span class="number">0xA</span>     ; 要输出的字符串</span><br><span class="line">        len equ $ - msg                 ; 字串长度</span><br><span class="line">        section .text            ; 代码段声明</span><br><span class="line">        <span class="keyword">global</span> _start            ; 指定入口函数</span><br><span class="line">        _start:                  ; 在屏幕上显示一个字符串</span><br><span class="line">        mov edx, len     ; 参数三：字符串长度</span><br><span class="line">        mov ecx, msg     ; 参数二：要显示的字符串</span><br><span class="line">        mov ebx, <span class="number">1</span>       ; 参数一：文件描述符(stdout) </span><br><span class="line">        mov eax, <span class="number">4</span>       ; 系统调用号(sys_write) </span><br><span class="line">        int <span class="number">0x80</span>         ; 调用内核功能</span><br><span class="line">                         ; 退出程序</span><br><span class="line">        mov ebx, <span class="number">0</span>       ; 参数一：退出代码</span><br><span class="line">        mov eax, <span class="number">1</span>       ; 系统调用号(sys_exit) </span><br><span class="line">        int <span class="number">0x80</span>         ; 调用内核功能</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>逐渐开始向人类语言习惯进行转换，后来，计算机编程语言演化出了高级语言的面向过程语言、面向对象语言，逐步形成了今天的样子</p>
+<h2 id="高级语言分类"><a href="#高级语言分类" class="headerlink" title="高级语言分类"></a>高级语言分类</h2><p>高级语言分类普遍有两种分法，面向过程和面向对象以及解释型语言和编译型语言</p>
+<p>Python是面向对象的解释型语言，由于面向对象的含义会在后续讲到，而且解释型语言和编译型语言给人的感官更为直接，所以首先介绍解释型语言和编译型语言</p>
+<h3 id="解释型语言"><a href="#解释型语言" class="headerlink" title="解释型语言"></a>解释型语言</h3><p>解释型语言不直接转换为机器语言，而是转换成中间代码（例如java转换成字节码），在运行的时候，中间代码发送给解释器，解释器逐句翻译交给CPU执行</p>
+<p>解释型语言所写的程序，由于还需要解释器进行翻译，所以运行效率略低，但是，不同平台的问题可以通过使用不同平台对应的解释器进行解决，所以，同一个程序可以在不同的平台上运行</p>
+<h3 id="编译型语言"><a href="#编译型语言" class="headerlink" title="编译型语言"></a>编译型语言</h3><p>编译型语言在开发完成后就要进行编译，编译过程是先转换成汇编语言，再编译成机器语言，最后在运行的时候直接交给CPU进行执行</p>
+<p>编译型语言所写的程序，可以直接交给CPU进行执行，所以运行效率高，但是不同平台底层并不兼容，所以不能跨平台跨系统</p>
+<blockquote>
+<p>Java由于字节码与虚拟机的特例性，目前对于它到底属于解释型语言还是编译型语言，每个人都有不同的看法</p>
+</blockquote>
+<h2 id="效用对比"><a href="#效用对比" class="headerlink" title="效用对比"></a>效用对比</h2><p> 开发效率</p>
+<p> 　　（解释型 &gt; 编译型） &gt; 汇编语言 &gt; 机器语言</p>
+<p> 执行效率</p>
+<p> 　　机器语言 &gt; 汇编语言 &gt; (编译型 &gt; 解释型)</p>
+<p>跨平台性：解释型具有极强的跨平台型，而编译型语言需要重新编译调整</p>
+<hr>
+<h1 id="计算机组成"><a href="#计算机组成" class="headerlink" title="计算机组成"></a>计算机组成</h1><p>聊完了编程语言，我们还需要对计算机的基本组成有简单的了解</p>
+<h2 id="计算机的五大部分"><a href="#计算机的五大部分" class="headerlink" title="计算机的五大部分"></a>计算机的五大部分</h2><p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/1036857-20180314171523158-1421724255.png" alt="img"></p>
+<ul>
+<li><p>控制器      计算机的指挥系统，控制计算器其他组件工作</p>
+</li>
+<li><p>运算器      运算器包括数学运算与逻辑运算</p>
+<p>控制器+运算器=CPU</p>
+</li>
+<li><p>存储器      计算机的记忆功能，负责数据的存储</p>
+<ul>
+<li>存储器区分：使用的时候首要要从外存提取到内存中等待运算器与控制区读取<ul>
+<li>内存：又被称为主存储器，基于电工作，存取速度快，但只能临时存储数据，掉电则丢失数据</li>
+<li>外存：又被称为外部存储设备，例如硬盘，基于磁工作，存取速度相对慢，理论可以永久保存数据</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>输入(Input)设备      键盘、鼠标等</p>
+</li>
+<li><p>输出(output)设备      显示器、打印机等</p>
+</li>
+</ul>
+<h2 id="软件工作流程简述"><a href="#软件工作流程简述" class="headerlink" title="软件工作流程简述"></a>软件工作流程简述</h2><p>程序最先是存放于硬盘中的，程序运行，CPU发出指令，将程序和数据由硬盘加载至内存，CPU与内存读取存储：指令和临时数据，完成程序交互后才将指令和(临时)数据存放到硬盘</p>
+<p>由于CPU的存取指令与输入输出的数据都直接来自于内存的交换，所以内存被称为主存</p>
+<hr>
+<h1 id="平台与操作系统"><a href="#平台与操作系统" class="headerlink" title="平台与操作系统"></a>平台与操作系统</h1><h2 id="平台"><a href="#平台" class="headerlink" title="平台"></a>平台</h2><p>我们常说跨平台概念，那么平台是什么呢？</p>
+<p>平台具体指的是应用程序的运行平台或者说是用户的使用平台</p>
+<p>平台简单来说就是操作系统+计算机硬件</p>
+<p>主流平台</p>
+<ul>
+<li>windows+某款硬件</li>
+<li>linux+某款硬件</li>
+<li>ios+iphone/ipad</li>
+<li>安卓系统+某个厂商的硬件</li>
+</ul>
+<p>跨平台就是多个平台不需要单独编译就可以直接使用</p>
+<h2 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h2><p>操作系统是一个协调、管理、控制计算机的硬件资源与应用软件资源的一个控制程序，位于计算机硬件与应用软件间，起到承上启下的作用。</p>
+<p>它的核心功能是控制计算机硬件的基本运行，把使用硬件的复杂操作封装成简单的功能，提供给上层应用程序或用户使用。</p>
+<blockquote>
+<p>操作系统都有一个文件系统概念</p>
+<p>文件系统就是操作系统给应用程序/用户操作硬盘的功能</p>
+</blockquote>
+<h2 id="软件"><a href="#软件" class="headerlink" title="软件"></a>软件</h2><p>计算机硬件是死的，计算机硬件的运行都受软件控制，所以软件相当于计算机的灵魂</p>
+<h3 id="软件分类"><a href="#软件分类" class="headerlink" title="软件分类"></a>软件分类</h3><ul>
+<li>应用软件：应用程序相关逻辑</li>
+<li>系统软件：控制底层硬件，并向上提供接口</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/2.%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%80%E8%BF%B0%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E3%80%81%E5%B9%B3%E5%8F%B0%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" title="2.计算机基础之简述编程语言、计算机组成、平台的基础概念">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/2.计算机基础之简述编程语言、计算机组成、平台的基础概念/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/CTF%E8%A7%A3%E9%A2%98/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/CTF%E8%A7%A3%E9%A2%98/7.%E5%90%88%E5%A4%A9%E7%BD%91%E5%AE%89%E7%AC%AC%E4%B8%83%E9%A2%98-%E5%86%8D%E8%A7%81%E4%B8%8A%E4%BC%A0%20/" rel="prev" title="7.合天网安第七题-再见上传">
+                  <i class="fa fa-chevron-left"></i> 7.合天网安第七题-再见上传
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/CTF%E8%A7%A3%E9%A2%98/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/CTF%E8%A7%A3%E9%A2%98/8.%E5%90%88%E5%A4%A9%E7%BD%91%E5%AE%89%E7%AC%AC%E5%85%AB%E9%A2%98-%E9%9A%8F%E6%84%8F%E7%9A%84%E4%B8%8A%E4%BC%A0%20%20/" rel="next" title="8.合天网安第八题-随意的上传">
+                  8.合天网安第八题-随意的上传 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

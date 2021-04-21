@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200211125934.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kinghtxg.github.io","root":"/","scheme":"Gemini","version":"8.0.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"./public/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="前文讲了流程控制和if判断语句，本章节就是来介绍循环的，循环结构就是重复执行某段代码块，人类某些时候需要重复做某件事情，所以程序中必须有相应的机制来控制计算机具备人的这种循环做事的能力 python中有while与for两种循环机制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.python流程控制之循环">
+<meta property="og:url" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/13.python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B9%8B%E5%BE%AA%E7%8E%AF/index.html">
+<meta property="og:site_name" content="kinght&#39;s blog">
+<meta property="og:description" content="前文讲了流程控制和if判断语句，本章节就是来介绍循环的，循环结构就是重复执行某段代码块，人类某些时候需要重复做某件事情，所以程序中必须有相应的机制来控制计算机具备人的这种循环做事的能力 python中有while与for两种循环机制">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902144703239.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902151005650.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902151328338.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902153259042.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902155331184.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902172043783.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902175122760.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902180723106.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902180828348.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200903135550665.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200903135614874.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200904165903990.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200904170647949.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200904232729258.png">
+<meta property="og:image" content="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/13.python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B9%8B%E5%BE%AA%E7%8E%AF/jpg/13.python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B9%8B%E5%BE%AA%E7%8E%AF/image-20200912002330702.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201007091105330.png">
+<meta property="og:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201011110507902.png">
+<meta property="article:published_time" content="2020-10-11T14:00:03.000Z">
+<meta property="article:modified_time" content="2020-10-27T09:57:36.000Z">
+<meta property="article:author" content="kinght">
+<meta property="article:tag" content="web安全、python、安全开发、逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902144703239.png">
+
+
+<link rel="canonical" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/13.python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B9%8B%E5%BE%AA%E7%8E%AF/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>13.python流程控制之循环 | kinght's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">kinght's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎大佬光临本博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-导航">
+
+    <a href="http://dh.geekxk.com/" rel="noopener" target="_blank"><i class="fa fa-sitemap fa-fw"></i>导航</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+	  
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#while%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.</span> <span class="nav-text">while循环</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%BB%E5%BE%AA%E7%8E%AF%E4%B8%8E%E6%95%88%E7%8E%87%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">死循环与效率问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9D%9F%E5%BE%AA%E7%8E%AF%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">结束循环的方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%9A%E5%88%A4%E6%96%AD%E6%9D%A1%E4%BB%B6%E6%94%B9%E4%B8%BAFalse"><span class="nav-number">1.3.1.</span> <span class="nav-text">方式一：判断条件改为False</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F%E4%BA%8C%EF%BC%9A%E6%B7%BB%E5%8A%A0break"><span class="nav-number">1.3.2.</span> <span class="nav-text">方式二：添加break</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F%E4%B8%89%EF%BC%9Acontinue"><span class="nav-number">1.3.3.</span> <span class="nav-text">方式三：continue</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#while%E4%B8%8Eelse%E8%BF%9E%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">while与else连用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%E7%94%A8%E6%B3%95"><span class="nav-number">1.4.1.</span> <span class="nav-text">案例用法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#for%E5%BE%AA%E7%8E%AF"><span class="nav-number">2.</span> <span class="nav-text">for循环</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%BE%AA%E7%8E%AF"><span class="nav-number">2.1.</span> <span class="nav-text">基本循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for%E5%BE%AA%E7%8E%AF%E6%8E%A7%E5%88%B6%E5%BE%AA%E7%8E%AF%E6%AC%A1%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">for循环控制循环次数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#range"><span class="nav-number">2.2.1.</span> <span class="nav-text">range()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#len"><span class="nav-number">2.2.2.</span> <span class="nav-text">len()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-continue"><span class="nav-number">2.3.</span> <span class="nav-text">for+continue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for%E5%BE%AA%E7%8E%AF%E5%B5%8C%E5%A5%97"><span class="nav-number">2.4.</span> <span class="nav-text">for循环嵌套</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="kinght"
+      src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+  <p class="site-author-name" itemprop="name">kinght</p>
+  <div class="site-description" itemprop="description">萌新笔记，恳请大佬多多指教</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kinghtxg" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kinghtxg" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:kinght@geekxk.com" title="E-Mail → mailto:kinght@geekxk.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/13.python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B9%8B%E5%BE%AA%E7%8E%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/-4f0ac95857430b53.gif">
+      <meta itemprop="name" content="kinght">
+      <meta itemprop="description" content="萌新笔记，恳请大佬多多指教">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="kinght's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          13.python流程控制之循环
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-11 22:00:03" itemprop="dateCreated datePublished" datetime="2020-10-11T22:00:03+08:00">2020-10-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-10-27 17:57:36" itemprop="dateModified" datetime="2020-10-27T17:57:36+08:00">2020-10-27</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">程序语言</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">python基础</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>前文讲了流程控制和if判断语句，本章节就是来介绍循环的，循环结构就是重复执行某段代码块，人类某些时候需要重复做某件事情，所以程序中必须有相应的机制来控制计算机具备人的这种循环做事的能力</p>
+<p>python中有while与for两种循环机制</p>
+<a id="more"></a>
+
+<hr>
+<h1 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h1><p>while循环又被称之为条件循环，它是先进行判断，后进行循环</p>
+<h2 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h2><p><strong>伪代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> 条件:</span><br><span class="line">	代码<span class="number">1</span></span><br><span class="line">	代码<span class="number">2</span></span><br><span class="line">	代码<span class="number">3</span></span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+
+<p>先判断while后面的条件是否成立，成立就执行下面的循环语句，语句执行完成后，再次判断while后面的条件是否成立，然后不停的往复，直到while条件语句不成立了，然后跳出循环</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902144703239.png" alt="image-20200902144703239"></p>
+<p><strong>演示代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">count = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> count &lt;= <span class="number">5</span>:</span><br><span class="line">    print(count) <span class="comment"># 输出count当前值</span></span><br><span class="line">    count+=<span class="number">1</span></span><br><span class="line">print(<span class="string">&quot;循环结束&quot;</span>)	<span class="comment"># 此代码不属于循环</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902151005650.png" alt="image-20200902151005650"></p>
+<h2 id="死循环与效率问题"><a href="#死循环与效率问题" class="headerlink" title="死循环与效率问题"></a>死循环与效率问题</h2><p>所谓死循环，就是不会结束的循环，最简单的例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">count = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    print(count)</span><br><span class="line">    count+=<span class="number">1</span></span><br><span class="line">print(<span class="string">&quot;循环结束&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>开始运行后，由于while的条件语句永远为True，它就会被无休止的自加下去</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902151328338.png" alt="image-20200902151328338"></p>
+<p>而且这句话，本身控制的是CPU，让CPU不停的进行高速运算，CPU就会大量散热，就会听到CPU的风扇开始转了起来</p>
+<p>但是呢，有时候死循环并不是一定的坏事，比如用户的操作本来就需要循环进行的时候</p>
+<p><strong>演示代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ATM机简易场景</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    passwd = input(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span>(passwd == <span class="string">&#x27;123456&#x27;</span>):</span><br><span class="line">        print(<span class="string">&#x27;登陆成功，功能没有开发完全即将退出&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&#x27;登陆失败，请重新登陆&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902153259042.png" alt="image-20200902153259042"></p>
+<p>这里由于场景需求，我们需要它死循环，而且因为他有IO交互，交互的时候程序会等待，所以给CPU留出了休息的时间，避免了不停运算的情况</p>
+<h2 id="结束循环的方式"><a href="#结束循环的方式" class="headerlink" title="结束循环的方式"></a>结束循环的方式</h2><h3 id="方式一：判断条件改为False"><a href="#方式一：判断条件改为False" class="headerlink" title="方式一：判断条件改为False"></a>方式一：判断条件改为False</h3><p>while循环会判断循环条件是否为真，为真才进行循环操作，所以我们让他为假就不会循环了</p>
+<p>注意：如果本次判断已经是True了，修改之后，还是同样会完成本次循环，直到下次判断为False才会终止</p>
+<p><strong>演示代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ATM机简易场景</span></span><br><span class="line">tag = <span class="literal">True</span></span><br><span class="line"><span class="keyword">while</span> tag:  <span class="comment"># 判断tag</span></span><br><span class="line">    passwd = input(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span>(passwd == <span class="string">&#x27;123456&#x27;</span>):</span><br><span class="line">        print(<span class="string">&#x27;登陆成功&#x27;</span>)</span><br><span class="line">        tag = <span class="literal">False</span> <span class="comment">#tag修改为False,本次循环完成后再次进行while检测就为假了</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&#x27;登陆失败，请重新登陆&#x27;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;您的账户余额为0&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902155331184.png" alt="image-20200902155331184"></p>
+<h3 id="方式二：添加break"><a href="#方式二：添加break" class="headerlink" title="方式二：添加break"></a>方式二：添加break</h3><p>只要运行到break，就会<strong>立即终止</strong>本层循环</p>
+<p><strong>演示代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ATM机简易场景</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    passwd = input(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span>(passwd == <span class="string">&#x27;123456&#x27;</span>):</span><br><span class="line">        print(<span class="string">&#x27;登陆成功&#x27;</span>)</span><br><span class="line">        <span class="keyword">break</span> <span class="comment"># 立刻终止本层循环</span></span><br><span class="line">        print(<span class="string">&#x27;break之后的代码&#x27;</span>) <span class="comment"># 由于break是立即跳出循环，故此行不运行</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&#x27;登陆失败，请重新登陆&#x27;</span>)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;您的账户余额为0&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902172043783.png" alt="image-20200902172043783"></p>
+<p>如果是多层嵌套循环，想要跳出多层循环，就需要每一层都添加break</p>
+<p><strong>伪代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">			<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">	<span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="方式三：continue"><a href="#方式三：continue" class="headerlink" title="方式三：continue"></a>方式三：continue</h3><p>while可以和continue连用，其作用是结束掉本次循环，直接进入下一次</p>
+<p><strong>演示代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 跳过4的打印</span></span><br><span class="line">a = <span class="number">1</span></span><br><span class="line"><span class="keyword">while</span> a&lt;=<span class="number">10</span>:</span><br><span class="line">    <span class="keyword">if</span> a == <span class="number">4</span>:</span><br><span class="line">        a += <span class="number">1</span>  <span class="comment"># 如果这里没有+1，本次循环跳出之后，a还是等于4，就会陷入死循环</span></span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">    print(a)</span><br><span class="line">    a += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902175122760.png" alt="image-20200902175122760"></p>
+<h2 id="while与else连用"><a href="#while与else连用" class="headerlink" title="while与else连用"></a>while与else连用</h2><p>在while中也可以使用else，但是要想让else的代码运行，必须要是while结束循环之后，并且循环不是因为break中途打断才结束才可以</p>
+<p><strong>演示代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">count = <span class="number">0</span></span><br><span class="line">b = int(input(请输入最大值))</span><br><span class="line"><span class="keyword">while</span> count &lt;= b:</span><br><span class="line">    print(count)</span><br><span class="line">    <span class="keyword">if</span> count == <span class="number">5</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    count += <span class="number">1</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">&quot;正常的退出&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这个代码是让程序从0输出到我们想要的整数，但是我们在6的位置添加了break，也就是说限制到小于6，大于6会被break给退出</p>
+<p>我们输入小于6的任意数，else都会同步输出</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902180723106.png" alt="image-20200902180723106"></p>
+<p>但是如果大于了5，就不会运行else语句</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200902180828348.png" alt="image-20200902180828348"></p>
+<h3 id="案例用法"><a href="#案例用法" class="headerlink" title="案例用法"></a>案例用法</h3><p>将上面的ATM取款机代码进行优化(取款机代码限制输错次数3次)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">count = <span class="number">0</span>   <span class="comment">#计次</span></span><br><span class="line"><span class="keyword">while</span> count &lt; <span class="number">3</span>:</span><br><span class="line">    username = input(<span class="string">&quot;请输入账号：&quot;</span>)</span><br><span class="line">    password = input(<span class="string">&quot;请输入密码：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> username == <span class="string">&quot;admin&quot;</span> <span class="keyword">and</span> password == <span class="string">&quot;admin&quot;</span>:</span><br><span class="line">        print(<span class="string">&quot;登陆成功！&quot;</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        print(<span class="string">&quot;密码错误&#123;&#125;次&quot;</span>.format(count))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">&quot;密码错误三次，卡已经冻结&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>登陆成功返回</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200903135550665.png" alt="image-20200903135550665"></p>
+<p>密码错误返回</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200903135614874.png" alt="image-20200903135614874"></p>
+<hr>
+<h1 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h1><p>for循环，又被称为迭代循环(取值循环)，是python提供的第二种循环机制，从理论上for循环能做的事情，while循环都能做，for循环在循环取值上面比while更加简便</p>
+<h2 id="基本循环"><a href="#基本循环" class="headerlink" title="基本循环"></a>基本循环</h2><p><strong>伪代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可迭代对象可以是：列表、字典、字符串、元组、集合</span></span><br><span class="line"><span class="keyword">for</span> 变量名 <span class="keyword">in</span> 可迭代对象:</span><br><span class="line">	代码<span class="number">1</span></span><br><span class="line">	代码<span class="number">2</span></span><br><span class="line">	代码<span class="number">3</span></span><br><span class="line">	....</span><br></pre></td></tr></table></figure>
+
+<p><strong>演示代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> [<span class="string">&#x27;kinght&#x27;</span>,<span class="string">&#x27;amber&#x27;</span>,<span class="string">&#x27;alisa&#x27;</span>,<span class="string">&#x27;AYM&#x27;</span>]:</span><br><span class="line">    print(x)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200904165903990.png" alt="image-20200904165903990"></p>
+<p>for循环会将可迭代对象中的值一个一个的取出来，直到整个可迭代对象的值被取干净为止</p>
+<p>for循环的次数取决于可迭代对象内部值的个数</p>
+<p>for循环取字典，默认取出来的是字典的key，取value可以通过dic[key]的方式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dic = &#123;<span class="string">&#x27;kinght&#x27;</span>:<span class="string">&#x27;amber&#x27;</span>,<span class="string">&#x27;alisa&#x27;</span>:<span class="string">&#x27;AYM&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> dic:</span><br><span class="line">    print(x,<span class="string">&#x27;:&#x27;</span>,dic[x])</span><br></pre></td></tr></table></figure>
+
+<p>输出结果</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200904170647949.png" alt="image-20200904170647949"></p>
+<h2 id="for循环控制循环次数"><a href="#for循环控制循环次数" class="headerlink" title="for循环控制循环次数"></a>for循环控制循环次数</h2><h3 id="range"><a href="#range" class="headerlink" title="range()"></a>range()</h3><p>在这里首先介绍一个函数<code>range()</code>，这是一个在python2就有的功能，他的功能是生成从0开始的数组，括号里是多少，就生成序号到多少的列表</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20200904232729258.png" alt="image-20200904232729258"></p>
+<p>也可以直接指定列表数字(python2)，<strong>头能取，尾取-1</strong></p>
+<p><img src="jpg/13.python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B9%8B%E5%BE%AA%E7%8E%AF/image-20200912002330702.png" alt="image-20200912002330702"></p>
+<p>指定步长取等差数列(步长为2)</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201007091105330.png" alt="image-20201007091105330"></p>
+<p>Python3 range() 函数返回的是一个可迭代对象（类型是对象），而不是列表类型， 所以打印的时候不会打印列表，这样做内存空间优化了，使用并不会有什么区别</p>
+<p><img src="https://skystarry-1251157247.cos.ap-chengdu.myqcloud.com/img/image-20201011110507902.png"></p>
+<p>对前文模拟登陆代码的修改</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sys_name = <span class="string">&#x27;admin&#x27;</span></span><br><span class="line">sys_pwd = <span class="string">&#x27;admin&#x27;</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">    name = input(<span class="string">&quot;请输入账号：&quot;</span>)</span><br><span class="line">    pwd = input(<span class="string">&#x27;请输入密码：&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span>(name == sys_name <span class="keyword">and</span> pwd == sys_pwd):</span><br><span class="line">        print(<span class="string">&quot;密码正确&quot;</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">&quot;密码错误&#123;&#125;次,还有&#123;&#125;次机会&quot;</span>.format((x+<span class="number">1</span>),(<span class="number">2</span>-x)))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">&quot;账号验证错误次数过多，请联系管理员找回密码&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="len"><a href="#len" class="headerlink" title="len()"></a>len()</h3><p>数列表个数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">l = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>]</span><br><span class="line">print(len(l))	<span class="comment">#输出结果为6</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="for-continue"><a href="#for-continue" class="headerlink" title="for+continue"></a>for+continue</h2><p>for循环和while循环与continue连用效果相同，其作用是结束掉本次循环，直接进入下一次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>):</span><br><span class="line">    <span class="keyword">if</span> i == <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    print(i)    <span class="comment">#0 1 2 4 5</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="for循环嵌套"><a href="#for循环嵌套" class="headerlink" title="for循环嵌套"></a>for循环嵌套</h2><p>for循环也是可以进行嵌套的</p>
+<p>案例：10以内的乘法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">10</span>):</span><br><span class="line">    <span class="keyword">for</span> b <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">10</span>):</span><br><span class="line">        print(<span class="string">&#x27;&#123;&#125;x&#123;&#125;=&#123;&#125;&#x27;</span>.format(a,b,a*b))</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>kinght
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://kinghtxg.github.io/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/13.python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B9%8B%E5%BE%AA%E7%8E%AF/" title="13.python流程控制之循环">https://kinghtxg.github.io/程序语言/Python/python基础/编程语言/python/13.python流程控制之循环/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/Web%E5%AE%89%E5%85%A8/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/web%E5%AE%89%E5%85%A8/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/1.%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="prev" title="1.信息收集">
+                  <i class="fa fa-chevron-left"></i> 1.信息收集
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/%E7%A8%8B%E5%BA%8F%E8%AF%AD%E8%A8%80/Python/python%E5%9F%BA%E7%A1%80/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/python/14.python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%86%85%E7%BD%AE%E6%96%B9%E6%B3%95/" rel="next" title="14.python数据类型及内置方法">
+                  14.python数据类型及内置方法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+  
+  
+  
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kinght</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">159k</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>
